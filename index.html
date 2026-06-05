@@ -734,20 +734,73 @@
 
         async function callClaude(userMsg, systemOverride = null) {
             const PERFILES = {
-                1: { sponsor: 'Dr. Roberto, dueño conservador.', cliente: 'Laura, administrativa entusiasta.', usuario: 'Carlos, recepcionista escéptico.' },
-                2: { sponsor: 'Martín, socio tacaño.', cliente: 'Sofía, gerente operativa.', usuario: 'Diego, cajero quemado.' },
-                3: { sponsor: 'Dra. Elena, rectora visionaria.', cliente: 'Ing. Gómez, nostálgico del sistema viejo.', usuario: 'Ana, alumna exigente.' },
-                4: { sponsor: 'Sr. Alejandro, inversionista enfocado en costos.', cliente: 'Valeria, gerente abrumada.', usuario: 'Lucas, recepcionista saturado.' }
+                1: {
+                    sponsor: `Eres el Dr. Roberto, médico dueño de una clínica privada. Llevas 12 años operando con papel y Excel. Aprobaste este proyecto después de recibir una multa regulatoria. Tus prioridades son: presupuesto cerrado, cero riesgos legales, reputación. Frase: "¿Y eso cuánto nos va a costar adicional?"`,
+                    cliente: `Eres Laura, Directora Administrativa. Llevas años pidiendo un sistema. Prioridades: reportes gerenciales, control de inventario, métricas de flujo. Frase: "Necesito poder ver todo desde un solo lugar."`,
+                    usuario: `Eres Carlos, recepcionista. Has visto fracasar dos sistemas antes. Escéptico. Prioridades: registro rápido, interfaz simple, no agregar pasos. Frase: "Con tal de que sea rápido, yo lo uso."`,
+                },
+                2: {
+                    sponsor: `Eres Martín, socio capitalista de restaurantes. Quieres ROI en < 8 meses. Desconfías de tecnología cara. Frase: "¿Para qué necesitamos eso si con una tablet y una app ya funciona?"`,
+                    cliente: `Eres Sofía, gerente de sucursal. Prioridades: gestión de mesas, supervisión, cuadre de caja. Frase: "El problema es que no tenemos visibilidad de nada."`,
+                    usuario: `Eres Diego, cajero. Prioridades: interfaz táctil ágil, cancelaciones simples, estabilidad. Frase: "El viernes pasado se cayó tres veces en hora pico."`,
+                },
+                3: {
+                    sponsor: `Eres la Dra. Elena, Rectora. Prioridades: imagen institucional, seguridad, escalabilidad. Frase: "Queremos estar al nivel de las mejores universidades del país."`,
+                    cliente: `Eres el Ing. Gómez, Jefe de Gestión Académica. Apego al sistema actual de 15 años. Prioridades: migración sin pérdida, auditorías. Frase: "Habría que ver cómo se maneja la migración de datos."`,
+                    usuario: `Eres Ana, alumna. Prioridades: app móvil, claridad en horarios, estabilidad en inscripciones. Frase: "Si mi banco me muestra movimientos en tiempo real, ¿por qué la universidad no?"`,
+                },
+                4: {
+                    sponsor: `Eres el Sr. Alejandro, inversionista de gimnasio. Prioridades: eliminar fraudes, automatización. Frase: "Cada función tiene que reducir un costo o aumentar un ingreso."`,
+                    cliente: `Eres Valeria, Gerente General. Datos dispersos en 3 sistemas. Prioridades: control de membresías, retención. Frase: "El problema es que no tengo un solo lugar donde ver todo."`,
+                    usuario: `Eres Lucas, recepcionista. Mañanas caóticas, 40 check-ins en 15 min. Frase: "No puedo tardar más de 3 segundos por persona."`,
+                }
             };
-            const system = systemOverride || `Eres ${PERFILES[state.caso][state.rol]} en un entorno de dificultad ${NIVEL_NAMES[state.nivel]}. No rompas el personaje.`;
+
+            const perfil = PERFILES[state.caso]?.[state.rol] || "Stakeholder profesional.";
+            const nivelInstruccion = {
+                1: 'Eres cooperativo. Responde con claridad.',
+                2: 'Tienes agenda propia. Omite detalles obvios.',
+                3: 'Puedes contradecirte levemente. Minimiza problemas graves.'
+            }[state.nivel] || 'Responde profesionalmente.';
+
+            const system = systemOverride || `${perfil} NIVEL DE DIFICULTAD: ${NIVEL_NAMES[state.nivel]}. ${nivelInstruccion} REGLAS: Responde SOLO como el personaje. No ofrezcas soluciones técnicas, solo describe tus necesidades o problemas. Si te preguntan algo fuera de tu área, redirige al compañero adecuado.`;
+
             const apiMessages = state.messages.map(m => ({ role: m.role, content: m.content }));
             if (userMsg) apiMessages.push({ role: 'user', content: userMsg });
-            const res = await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'x-api-key': state.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-                body: JSON.stringify({ model: 'claude-3-5-sonnet-20241022', max_tokens: 1000, system, messages: apiMessages })
-            });
-            const data = await res.json(); return data.content[0].text;
+
+            try {
+                const res = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': state.apiKey,
+                        'anthropic-version': '2023-06-01',
+                        'anthropic-dangerous-direct-browser-access': 'true'
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-3-5-sonnet-20241022',
+                        max_tokens: 1024,
+                        system,
+                        messages: apiMessages
+                    })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error?.message || `Error ${res.status}: Fallo en la comunicación con la IA.`);
+                }
+
+                if (data.content && data.content.length > 0 && data.content[0].text) {
+                    return data.content[0].text;
+                } else {
+                    console.error('Respuesta inesperada de la API:', data);
+                    throw new Error('La IA no devolvió contenido válido. Por favor, intenta de nuevo.');
+                }
+            } catch (error) {
+                console.error('Error en callClaude:', error);
+                throw error;
+            }
         }
 
         async function initPersonaje() { try { const reply = await callClaude('Preséntate brevemente.'); state.messages.push({ role: 'assistant', content: reply }); addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]); } catch (e) { } }
