@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StakeFlow — Simulador de Stakeholders</title>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
@@ -26,7 +29,12 @@
             --radius-lg: 10px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: var(--font-display);
             background: var(--bg-primary);
@@ -38,90 +46,406 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--bg-primary); }
-        ::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 20px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-main); }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
 
-        .lucide { width: 1.25em; height: 1.25em; stroke-width: 2; }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-highlight);
+            border-radius: 20px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-main);
+        }
+
+        .lucide {
+            width: 1.25em;
+            height: 1.25em;
+            stroke-width: 2;
+        }
 
         .header {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 1.5rem; height: 60px; background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            height: 60px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            z-index: 50;
         }
-        .header-logo { display: flex; align-items: center; gap: 0.75rem; }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
         .header-logo-icon {
-            width: 32px; height: 32px; background: var(--accent-main);
-            border-radius: var(--radius); display: flex; align-items: center;
-            justify-content: center; color: #000;
+            width: 32px;
+            height: 32px;
+            background: var(--accent-main);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
         }
-        .header-title { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.025em; }
-        .header-version { font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted); margin-left: 0.5rem; }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .header-version {
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            margin-left: 0.5rem;
+        }
 
         .mobile-toggle {
-            display: none; background: none; border: 1px solid var(--border);
-            color: var(--text-primary); padding: 0.5rem; border-radius: var(--radius); cursor: pointer;
+            display: none;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
         }
 
-        .main { display: flex; flex: 1; overflow: hidden; position: relative; }
+        .main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
 
-        .panel-left, .panel-right { background: var(--bg-secondary); display: flex; flex-direction: column; overflow: hidden; transition: transform 0.3s ease; }
-        .panel-left { width: 260px; border-right: 1px solid var(--border); }
-        .panel-right { width: 300px; border-left: 1px solid var(--border); }
-        .panel-section { padding: 1.25rem; border-bottom: 1px solid var(--border); }
-        .panel-label { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 1rem; }
+        .panel-left,
+        .panel-right {
+            background: var(--bg-secondary);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
 
-        .setup-screen { position: fixed; inset: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1.5rem; }
-        .setup-container { width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; padding: 2rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); }
-        .setup-header { text-align: center; margin-bottom: 2.5rem; }
-        .setup-icon { width: 64px; height: 64px; background: var(--accent-main); border-radius: 1.25rem; display: flex; align-items: center; justify-content: center; color: #000; margin: 0 auto 1.5rem; box-shadow: 0 0 40px -10px var(--accent-main); }
-        .setup-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.5rem; }
-        .setup-subtitle { font-size: 0.875rem; color: var(--text-secondary); }
+        .panel-left {
+            width: 260px;
+            border-right: 1px solid var(--border);
+        }
 
-        .casos-grid, .niveles-grid { display: grid; gap: 0.75rem; margin-bottom: 1.5rem; }
-        .casos-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-        .niveles-grid { grid-template-columns: repeat(3, 1fr); }
+        .panel-right {
+            width: 300px;
+            border-left: 1px solid var(--border);
+        }
 
-        .card { padding: 1.25rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
-        .card:hover { border-color: var(--border-highlight); background: var(--bg-hover); transform: translateY(-2px); }
-        .card.selected { border-color: var(--accent-main); background: rgba(16, 185, 129, 0.05); }
-        .card-icon { color: var(--accent-main); margin-bottom: 0.75rem; }
-        .card-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem; }
-        .card-desc { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
+        .panel-section {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
 
-        .panel-center { flex: 1; display: flex; flex-direction: column; background: var(--bg-primary); position: relative; }
-        .chat-header { padding: 1rem 1.5rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1rem; }
-        .chat-avatar { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--accent-main); flex-shrink: 0; }
-        .chat-messages { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
+        .panel-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
 
-        .msg { display: flex; gap: 1rem; max-width: 85%; }
-        .msg.user { align-self: flex-end; flex-direction: row-reverse; }
-        .msg-bubble { padding: 1rem 1.25rem; border-radius: 1.25rem; font-size: 0.925rem; line-height: 1.6; background: var(--bg-secondary); border: 1px solid var(--border); }
-        .msg.user .msg-bubble { background: var(--accent-main); color: #000; border: none; }
+        .setup-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1.5rem;
+        }
 
-        .chat-input-area { padding: 1.5rem; background: var(--bg-secondary); border-top: 1px solid var(--border); }
-        .chat-input-wrap { max-width: 800px; margin: 0 auto; display: flex; gap: 0.75rem; background: var(--bg-tertiary); padding: 0.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); }
-        .chat-input { flex: 1; background: none; border: none; color: var(--text-primary); padding: 0.5rem 0.75rem; font-family: var(--font-display); font-size: 0.95rem; outline: none; resize: none; }
+        .setup-container {
+            width: 100%;
+            max-width: 640px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+        }
 
-        .btn-primary { background: var(--accent-main); color: #000; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: var(--radius); border: none; cursor: pointer; transition: all 0.2s; }
-        .btn-primary:hover { opacity: 0.9; transform: scale(1.02); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .setup-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
 
-        .hidden { display: none !important; }
-        .loading-overlay { position: fixed; inset: 0; background: rgba(9,9,11,0.8); backdrop-filter: blur(4px); z-index: 300; display: flex; align-items: center; justify-content: center; }
-        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent-main); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .setup-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--accent-main);
+            border-radius: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 0 40px -10px var(--accent-main);
+        }
+
+        .setup-title {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .setup-subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .casos-grid,
+        .niveles-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .casos-grid {
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        }
+
+        .niveles-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .card {
+            padding: 1.25rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: var(--border-highlight);
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+        }
+
+        .card.selected {
+            border-color: var(--accent-main);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .card-icon {
+            color: var(--accent-main);
+            margin-bottom: 0.75rem;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .panel-center {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+            position: relative;
+        }
+
+        .chat-header {
+            padding: 1rem 1.5rem;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--accent-main);
+            flex-shrink: 0;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .msg {
+            display: flex;
+            gap: 1rem;
+            max-width: 85%;
+        }
+
+        .msg.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .msg-bubble {
+            padding: 1rem 1.25rem;
+            border-radius: 1.25rem;
+            font-size: 0.925rem;
+            line-height: 1.6;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .msg.user .msg-bubble {
+            background: var(--accent-main);
+            color: #000;
+            border: none;
+        }
+
+        .chat-input-area {
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+        }
+
+        .chat-input-wrap {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.75rem;
+            background: var(--bg-tertiary);
+            padding: 0.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 0.5rem 0.75rem;
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            outline: none;
+            resize: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-main);
+            color: #000;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent-main);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         @media (max-width: 1024px) {
-            .panel-left, .panel-right { position: absolute; top: 0; bottom: 0; z-index: 40; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
-            .panel-left { left: 0; transform: translateX(-100%); width: 280px; }
-            .panel-right { right: 0; transform: translateX(100%); width: 280px; }
-            .panel-left.open, .panel-right.active { transform: translateX(0); }
-            .mobile-toggle { display: block; }
+
+            .panel-left,
+            .panel-right {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                z-index: 40;
+                box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            }
+
+            .panel-left {
+                left: 0;
+                transform: translateX(-100%);
+                width: 280px;
+            }
+
+            .panel-right {
+                right: 0;
+                transform: translateX(100%);
+                width: 280px;
+            }
+
+            .panel-left.open,
+            .panel-right.active {
+                transform: translateX(0);
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="setup-screen" id="setupScreen">
         <div class="setup-container">
@@ -132,7 +456,8 @@
             </div>
             <div class="setup-section">
                 <label class="panel-label">API Key de Anthropic</label>
-                <input type="password" class="chat-input" id="apiKeyInput" placeholder="sk-ant-api03-..." style="width:100%; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary)" />
+                <input type="password" class="chat-input" id="apiKeyInput" placeholder="sk-ant-api03-..."
+                    style="width:100%; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary)" />
             </div>
             <div class="setup-section">
                 <label class="panel-label">Caso de Estudio</label>
@@ -141,12 +466,22 @@
             <div class="setup-section">
                 <label class="panel-label">Dificultad</label>
                 <div class="niveles-grid">
-                    <div class="card" onclick="selectNivel(1)" id="nivel-1"><div class="card-title">Cooperativo</div><div class="card-desc">Respuestas claras.</div></div>
-                    <div class="card" onclick="selectNivel(2)" id="nivel-2"><div class="card-title">Realista</div><div class="card-desc">Resistencia moderada.</div></div>
-                    <div class="card" onclick="selectNivel(3)" id="nivel-3"><div class="card-title">Adversarial</div><div class="card-desc">Conflictos y evasivas.</div></div>
+                    <div class="card" onclick="selectNivel(1)" id="nivel-1">
+                        <div class="card-title">Cooperativo</div>
+                        <div class="card-desc">Respuestas claras.</div>
+                    </div>
+                    <div class="card" onclick="selectNivel(2)" id="nivel-2">
+                        <div class="card-title">Realista</div>
+                        <div class="card-desc">Resistencia moderada.</div>
+                    </div>
+                    <div class="card" onclick="selectNivel(3)" id="nivel-3">
+                        <div class="card-title">Adversarial</div>
+                        <div class="card-desc">Conflictos y evasivas.</div>
+                    </div>
                 </div>
             </div>
-            <button class="btn-primary" style="width:100%" id="btnStart" onclick="startSession()" disabled>Comenzar Simulación</button>
+            <button class="btn-primary" style="width:100%" id="btnStart" onclick="startSession()" disabled>Comenzar
+                Simulación</button>
         </div>
     </div>
 
@@ -157,7 +492,8 @@
         </div>
         <div class="header-right" style="display:flex; align-items:center; gap:0.75rem">
             <button class="mobile-toggle" onclick="toggleSidebar('left')"><i data-lucide="menu"></i></button>
-            <span id="nivelLabel" style="font-size:0.7rem; font-weight:800; color:var(--accent-main); font-family:var(--font-mono)"></span>
+            <span id="nivelLabel"
+                style="font-size:0.7rem; font-weight:800; color:var(--accent-main); font-family:var(--font-mono)"></span>
             <button class="mobile-toggle" onclick="toggleSidebar('right')"><i data-lucide="list-checks"></i></button>
         </div>
     </div>
@@ -180,9 +516,15 @@
             </div>
             <div class="panel-section" style="margin-top:auto; border-bottom:none">
                 <div style="display:grid; gap:0.5rem">
-                    <button class="card" style="padding:0.75rem; text-align:left" onclick="generateIEEE()"><i data-lucide="file-text" style="vertical-align:middle; margin-right:0.5rem"></i> IEEE 830</button>
-                    <button class="card" style="padding:0.75rem; text-align:left" onclick="evaluateSession()"><i data-lucide="bar-chart-3" style="vertical-align:middle; margin-right:0.5rem"></i> Evaluación</button>
-                    <button class="card" style="padding:0.75rem; text-align:left" onclick="resetSession()"><i data-lucide="refresh-cw" style="vertical-align:middle; margin-right:0.5rem"></i> Reiniciar</button>
+                    <button class="card" style="padding:0.75rem; text-align:left" onclick="generateIEEE()"><i
+                            data-lucide="file-text" style="vertical-align:middle; margin-right:0.5rem"></i> IEEE
+                        830</button>
+                    <button class="card" style="padding:0.75rem; text-align:left" onclick="evaluateSession()"><i
+                            data-lucide="bar-chart-3" style="vertical-align:middle; margin-right:0.5rem"></i>
+                        Evaluación</button>
+                    <button class="card" style="padding:0.75rem; text-align:left" onclick="resetSession()"><i
+                            data-lucide="refresh-cw" style="vertical-align:middle; margin-right:0.5rem"></i>
+                        Reiniciar</button>
                 </div>
             </div>
         </div>
@@ -198,8 +540,10 @@
             <div class="chat-messages" id="chatMessages"></div>
             <div class="chat-input-area">
                 <div class="chat-input-wrap">
-                    <textarea class="chat-input" id="chatInput" placeholder="Pregunta algo..." rows="1" onkeydown="handleInputKey(event)"></textarea>
-                    <button class="btn-primary" style="padding:0.5rem 1rem" id="btnSend" onclick="sendMessage()"><i data-lucide="send"></i></button>
+                    <textarea class="chat-input" id="chatInput" placeholder="Pregunta algo..." rows="1"
+                        onkeydown="handleInputKey(event)"></textarea>
+                    <button class="btn-primary" style="padding:0.5rem 1rem" id="btnSend" onclick="sendMessage()"><i
+                            data-lucide="send"></i></button>
                 </div>
             </div>
         </div>
@@ -208,7 +552,8 @@
             <div class="panel-section">
                 <div style="display:flex; justify-content:space-between; align-items:center">
                     <label class="panel-label" style="margin-bottom:0">Requisitos</label>
-                    <span id="reqsCount" style="background:var(--accent-main); color:#000; font-size:0.7rem; font-weight:800; padding:2px 6px; border-radius:10px">0</span>
+                    <span id="reqsCount"
+                        style="background:var(--accent-main); color:#000; font-size:0.7rem; font-weight:800; padding:2px 6px; border-radius:10px">0</span>
                 </div>
             </div>
             <div id="reqsList" style="flex:1; overflow-y:auto; padding:1rem; display:grid; gap:0.75rem"></div>
@@ -216,35 +561,46 @@
     </div>
 
     <!-- MODALS -->
-    <div id="addReqModal" class="setup-screen hidden" style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
+    <div id="addReqModal" class="setup-screen hidden"
+        style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
         <div class="setup-container" style="max-width:480px">
             <h2 class="card-title" style="font-size:1.25rem; margin-bottom:1.5rem">Capturar Requisito</h2>
-            <textarea id="reqDesc" class="chat-input" style="width:100%; height:120px; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary); margin-bottom:1rem" placeholder="Descripción..."></textarea>
+            <textarea id="reqDesc" class="chat-input"
+                style="width:100%; height:120px; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary); margin-bottom:1rem"
+                placeholder="Descripción..."></textarea>
             <div style="display:flex; gap:0.75rem">
                 <button class="card" style="flex:1" onclick="closeModal('addReqModal')">Cancelar</button>
                 <button class="btn-primary" style="flex:1" onclick="saveReq()">Guardar</button>
             </div>
         </div>
     </div>
-    <div id="ieeeModal" class="setup-screen hidden" style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
+    <div id="ieeeModal" class="setup-screen hidden"
+        style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
         <div class="setup-container" style="max-width:800px; height:85vh; display:flex; flex-direction:column">
             <h2 class="card-title">Documento IEEE 830</h2>
-            <div id="ieeeOutput" style="flex:1; background:var(--bg-tertiary); padding:1.5rem; border-radius:var(--radius); overflow-y:auto; font-family:var(--font-mono); font-size:0.85rem; border:1px solid var(--border); white-space:pre-wrap; margin-top:1rem"></div>
+            <div id="ieeeOutput"
+                style="flex:1; background:var(--bg-tertiary); padding:1.5rem; border-radius:var(--radius); overflow-y:auto; font-family:var(--font-mono); font-size:0.85rem; border:1px solid var(--border); white-space:pre-wrap; margin-top:1rem">
+            </div>
             <div style="display:flex; gap:0.75rem; margin-top:1.5rem">
                 <button class="card" style="flex:1" onclick="closeModal('ieeeModal')">Cerrar</button>
                 <button class="btn-primary" style="flex:1" onclick="copyText('ieeeOutput')">Copiar</button>
             </div>
         </div>
     </div>
-    <div id="evalModal" class="setup-screen hidden" style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
+    <div id="evalModal" class="setup-screen hidden"
+        style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
         <div class="setup-container" style="max-width:560px">
             <h2 class="card-title">Evaluación</h2>
-            <div id="evalContent" style="background:var(--bg-tertiary); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border); font-size:0.9rem; margin-top:1rem"></div>
+            <div id="evalContent"
+                style="background:var(--bg-tertiary); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border); font-size:0.9rem; margin-top:1rem">
+            </div>
             <button class="card" style="width:100%; margin-top:1.5rem" onclick="closeModal('evalModal')">Cerrar</button>
         </div>
     </div>
 
-    <div class="loading-overlay hidden" id="loadingOverlay"><div class="spinner"></div></div>
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
 
     <script>
         let state = { apiKey: '', caso: null, rol: 'sponsor', nivel: null, messages: [], requirements: [], rolesVisited: new Set(), userMsgCount: 0, pendingCapture: null };
@@ -259,7 +615,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             renderCasosGrid();
             const savedKey = localStorage.getItem('sk_sim');
-            if (savedKey) try { document.getElementById('apiKeyInput').value = atob(savedKey); } catch (e) {}
+            if (savedKey) try { document.getElementById('apiKeyInput').value = atob(savedKey); } catch (e) { }
             lucide.createIcons();
         });
 
@@ -394,7 +750,7 @@
             const data = await res.json(); return data.content[0].text;
         }
 
-        async function initPersonaje() { try { const reply = await callClaude('Preséntate brevemente.'); state.messages.push({ role: 'assistant', content: reply }); addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]); } catch (e) {} }
+        async function initPersonaje() { try { const reply = await callClaude('Preséntate brevemente.'); state.messages.push({ role: 'assistant', content: reply }); addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]); } catch (e) { } }
         function toggleSidebar(side) { if (side === 'left') document.getElementById('sidebarLeft').classList.toggle('open'); else document.getElementById('sidebarRight').classList.toggle('active'); }
         function handleInputKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
         function showLoading() { document.getElementById('loadingOverlay').classList.remove('hidden'); }
@@ -417,4 +773,5 @@
         }
     </script>
 </body>
+
 </html>
