@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StakeFlow — Simulador de Stakeholders</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
@@ -21,20 +18,16 @@
             --text-primary: #fafafa;
             --text-secondary: #a1a1aa;
             --text-muted: #52525b;
-            --border: #27272a;
-            --border-highlight: #3f3f46;
+            --border: rgba(255,255,255,0.08);
+            --border-highlight: rgba(255,255,255,0.15);
             --font-display: 'Geist', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
-            --radius: 6px;
-            --radius-lg: 10px;
+            --radius: 8px;
+            --radius-lg: 14px;
+            --glass: rgba(24, 24, 27, 0.7);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: var(--font-display);
             background: var(--bg-primary);
@@ -46,504 +39,179 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
+        .glass-panel { background: var(--glass); backdrop-filter: blur(12px); border: 1px solid var(--border); box-shadow: inset 0 1px 0 rgba(255,255,255,0.05); }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 20px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-main); }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--border-highlight);
-            border-radius: 20px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-main);
-        }
-
-        .lucide {
-            width: 1.25em;
-            height: 1.25em;
-            stroke-width: 2;
-        }
+        .lucide { width: 1.25em; height: 1.25em; stroke-width: 1.5; }
 
         .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.5rem;
-            height: 60px;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-            z-index: 50;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; height: 64px; background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 50;
         }
-
-        .header-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
+        .header-logo { display: flex; align-items: center; gap: 0.75rem; }
         .header-logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--accent-main);
-            border-radius: var(--radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000;
+            width: 34px; height: 34px; background: var(--accent-main);
+            border-radius: var(--radius); display: flex; align-items: center;
+            justify-content: center; color: #000; box-shadow: 0 0 20px -5px var(--accent-main);
         }
-
-        .header-title {
-            font-size: 1.125rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
-
-        .header-version {
-            font-size: 0.75rem;
-            font-family: var(--font-mono);
-            color: var(--text-muted);
-            margin-left: 0.5rem;
-        }
+        .header-title { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.04em; }
+        .header-version { font-size: 0.7rem; font-family: var(--font-mono); color: var(--text-muted); background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; margin-left: 0.5rem; }
 
         .mobile-toggle {
-            display: none;
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 0.5rem;
-            border-radius: var(--radius);
-            cursor: pointer;
+            display: none; background: var(--bg-tertiary); border: 1px solid var(--border);
+            color: var(--text-primary); padding: 0.6rem; border-radius: var(--radius); cursor: pointer; transition: all 0.2s;
         }
 
-        .main {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-        }
+        .main { display: flex; flex: 1; overflow: hidden; position: relative; }
 
-        .panel-left,
-        .panel-right {
-            background: var(--bg-secondary);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
+        .panel-left, .panel-right { background: var(--bg-secondary); display: flex; flex-direction: column; overflow: hidden; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .panel-left { width: 280px; border-right: 1px solid var(--border); }
+        .panel-right { width: 320px; border-left: 1px solid var(--border); }
+        .panel-section { padding: 1.5rem; border-bottom: 1px solid var(--border); }
+        .panel-label { font-size: 0.65rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
 
-        .panel-left {
-            width: 260px;
-            border-right: 1px solid var(--border);
-        }
+        .setup-screen { position: fixed; inset: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1.5rem; }
+        .setup-container { width: 100%; max-width: 680px; max-height: 90vh; overflow-y: auto; padding: 2.5rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .setup-header { text-align: center; margin-bottom: 3rem; }
+        .setup-icon { width: 72px; height: 72px; background: var(--accent-main); border-radius: 1.5rem; display: flex; align-items: center; justify-content: center; color: #000; margin: 0 auto 1.5rem; box-shadow: 0 0 50px -10px var(--accent-main); }
+        .setup-title { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.06em; margin-bottom: 0.5rem; }
+        .setup-subtitle { font-size: 0.95rem; color: var(--text-secondary); }
 
-        .panel-right {
-            width: 300px;
-            border-left: 1px solid var(--border);
-        }
+        .casos-grid, .niveles-grid { display: grid; gap: 0.85rem; margin-bottom: 2rem; }
+        .casos-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+        .niveles-grid { grid-template-columns: repeat(3, 1fr); }
 
-        .panel-section {
-            padding: 1.25rem;
-            border-bottom: 1px solid var(--border);
-        }
+        .card { padding: 1.5rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; }
+        .card:hover { border-color: var(--accent-main); background: var(--bg-hover); transform: translateY(-4px); }
+        .card.selected { border-color: var(--accent-main); background: rgba(16, 185, 129, 0.08); box-shadow: 0 0 20px -10px var(--accent-main); }
+        .card-icon { color: var(--accent-main); margin-bottom: 1rem; }
+        .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.4rem; }
+        .card-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
 
-        .panel-label {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
+        .panel-center { flex: 1; display: flex; flex-direction: column; background: var(--bg-primary); position: relative; }
+        .chat-header { padding: 1.25rem 2rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1.25rem; }
+        .chat-avatar { width: 44px; height: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--accent-main); flex-shrink: 0; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 2.5rem; display: flex; flex-direction: column; gap: 2rem; }
 
-        .setup-screen {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            padding: 1.5rem;
-        }
+        .msg { display: flex; gap: 1.25rem; max-width: 80%; animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+        .msg-bubble { padding: 1.25rem 1.5rem; border-radius: 1.5rem; font-size: 0.95rem; line-height: 1.7; background: var(--bg-secondary); border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .msg.user .msg-bubble { background: var(--accent-main); color: #000; border: none; border-bottom-right-radius: 0.25rem; }
+        .msg.assistant .msg-bubble { border-bottom-left-radius: 0.25rem; }
 
-        .setup-container {
-            width: 100%;
-            max-width: 640px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 2rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-        }
+        .chat-input-area { padding: 2rem; background: var(--bg-secondary); border-top: 1px solid var(--border); }
+        .chat-input-wrap { max-width: 860px; margin: 0 auto; display: flex; gap: 1rem; background: var(--bg-tertiary); padding: 0.6rem; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+        .chat-input { flex: 1; background: none; border: none; color: var(--text-primary); padding: 0.75rem 1rem; font-family: var(--font-display); font-size: 1rem; outline: none; resize: none; }
 
-        .setup-header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
+        .btn-primary { background: var(--accent-main); color: #000; font-weight: 800; padding: 0.85rem 1.75rem; border-radius: var(--radius); border: none; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+        .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .setup-icon {
-            width: 64px;
-            height: 64px;
-            background: var(--accent-main);
-            border-radius: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000;
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 0 40px -10px var(--accent-main);
-        }
-
-        .setup-title {
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: -0.05em;
-            margin-bottom: 0.5rem;
-        }
-
-        .setup-subtitle {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        .casos-grid,
-        .niveles-grid {
-            display: grid;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .casos-grid {
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        }
-
-        .niveles-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        .card {
-            padding: 1.25rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .card:hover {
-            border-color: var(--border-highlight);
-            background: var(--bg-hover);
-            transform: translateY(-2px);
-        }
-
-        .card.selected {
-            border-color: var(--accent-main);
-            background: rgba(16, 185, 129, 0.05);
-        }
-
-        .card-icon {
-            color: var(--accent-main);
-            margin-bottom: 0.75rem;
-        }
-
-        .card-title {
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .card-desc {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        .panel-center {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-primary);
-            position: relative;
-        }
-
-        .chat-header {
-            padding: 1rem 1.5rem;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .chat-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            color: var(--accent-main);
-            flex-shrink: 0;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .msg {
-            display: flex;
-            gap: 1rem;
-            max-width: 85%;
-        }
-
-        .msg.user {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .msg-bubble {
-            padding: 1rem 1.25rem;
-            border-radius: 1.25rem;
-            font-size: 0.925rem;
-            line-height: 1.6;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-        }
-
-        .msg.user .msg-bubble {
-            background: var(--accent-main);
-            color: #000;
-            border: none;
-        }
-
-        .chat-input-area {
-            padding: 1.5rem;
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border);
-        }
-
-        .chat-input-wrap {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            gap: 0.75rem;
-            background: var(--bg-tertiary);
-            padding: 0.5rem;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-        }
-
-        .chat-input {
-            flex: 1;
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            padding: 0.5rem 0.75rem;
-            font-family: var(--font-display);
-            font-size: 0.95rem;
-            outline: none;
-            resize: none;
-        }
-
-        .btn-primary {
-            background: var(--accent-main);
-            color: #000;
-            font-weight: 700;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius);
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary:hover {
-            opacity: 0.9;
-            transform: scale(1.02);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(9, 9, 11, 0.8);
-            backdrop-filter: blur(4px);
-            z-index: 300;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border);
-            border-top-color: var(--accent-main);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
+        .hidden { display: none !important; }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(9, 9, 11, 0.9); backdrop-filter: blur(8px); z-index: 300; display: flex; align-items: center; justify-content: center; }
+        .spinner { width: 48px; height: 48px; border: 4px solid var(--bg-tertiary); border-top-color: var(--accent-main); border-radius: 50%; animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         @media (max-width: 1024px) {
-
-            .panel-left,
-            .panel-right {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                z-index: 40;
-                box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
-            }
-
-            .panel-left {
-                left: 0;
-                transform: translateX(-100%);
-                width: 280px;
-            }
-
-            .panel-right {
-                right: 0;
-                transform: translateX(100%);
-                width: 280px;
-            }
-
-            .panel-left.open,
-            .panel-right.active {
-                transform: translateX(0);
-            }
-
-            .mobile-toggle {
-                display: block;
-            }
+            .panel-left, .panel-right { position: absolute; top: 0; bottom: 0; z-index: 40; box-shadow: 0 0 60px rgba(0, 0, 0, 0.7); }
+            .panel-left { left: 0; transform: translateX(-100%); width: 300px; }
+            .panel-right { right: 0; transform: translateX(100%); width: 300px; }
+            .panel-left.open, .panel-right.active { transform: translateX(0); }
+            .mobile-toggle { display: block; }
         }
     </style>
 </head>
-
 <body>
     <div class="setup-screen" id="setupScreen">
         <div class="setup-container">
             <div class="setup-header">
-                <div class="setup-icon"><i data-lucide="layout-dashboard"></i></div>
+                <div class="setup-icon"><i data-lucide="sparkles"></i></div>
                 <h1 class="setup-title">StakeFlow</h1>
-                <p class="setup-subtitle">Simulador profesional de elicitación de requerimientos</p>
+                <p class="setup-subtitle">Impulsado por Google Gemini API (Free Tier)</p>
             </div>
             <div class="setup-section">
-                <label class="panel-label">API Key de Anthropic</label>
-                <input type="password" class="chat-input" id="apiKeyInput" placeholder="sk-ant-api03-..."
-                    style="width:100%; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary)" />
+                <label class="panel-label">Google API Key</label>
+                <input type="password" class="chat-input" id="apiKeyInput" placeholder="AIzaSy..."
+                    style="width:100%; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary)"
+                    oninput="checkSetupReady()" />
+                <p style="font-size:0.7rem; color:var(--text-muted); margin-top:0.5rem">Obtén tu clave gratuita en <a href="https://aistudio.google.com/" target="_blank" style="color:var(--accent-main)">Google AI Studio</a></p>
             </div>
             <div class="setup-section">
-                <label class="panel-label">Caso de Estudio</label>
+                <label class="panel-label">Escenario de Entrenamiento</label>
                 <div class="casos-grid" id="casosGrid"></div>
             </div>
             <div class="setup-section">
-                <label class="panel-label">Dificultad</label>
+                <label class="panel-label">Nivel de Desafío</label>
                 <div class="niveles-grid">
-                    <div class="card" onclick="selectNivel(1)" id="nivel-1">
-                        <div class="card-title">Cooperativo</div>
-                        <div class="card-desc">Respuestas claras.</div>
-                    </div>
-                    <div class="card" onclick="selectNivel(2)" id="nivel-2">
-                        <div class="card-title">Realista</div>
-                        <div class="card-desc">Resistencia moderada.</div>
-                    </div>
-                    <div class="card" onclick="selectNivel(3)" id="nivel-3">
-                        <div class="card-title">Adversarial</div>
-                        <div class="card-desc">Conflictos y evasivas.</div>
-                    </div>
+                    <div class="card" onclick="selectNivel(1)" id="nivel-1"><div class="card-title">Cooperativo</div><div class="card-desc">Respuestas fluidas.</div></div>
+                    <div class="card" onclick="selectNivel(2)" id="nivel-2"><div class="card-title">Realista</div><div class="card-desc">Resistencia natural.</div></div>
+                    <div class="card" onclick="selectNivel(3)" id="nivel-3"><div class="card-title">Adversarial</div><div class="card-desc">Agendas ocultas.</div></div>
                 </div>
             </div>
-            <button class="btn-primary" style="width:100%" id="btnStart" onclick="startSession()" disabled>Comenzar
-                Simulación</button>
+            <button class="btn-primary" style="width:100%" id="btnStart" onclick="startSession()" disabled>Configurar Entorno →</button>
         </div>
     </div>
 
     <div class="header">
         <div class="header-logo">
-            <div class="header-logo-icon"><i data-lucide="brain-circuit"></i></div>
-            <span class="header-title">StakeFlow <span class="header-version">v3.0</span></span>
+            <div class="header-logo-icon"><i data-lucide="workflow"></i></div>
+            <span class="header-title">StakeFlow <span class="header-version">v3.1</span></span>
         </div>
         <div class="header-right" style="display:flex; align-items:center; gap:0.75rem">
-            <button class="mobile-toggle" onclick="toggleSidebar('left')"><i data-lucide="menu"></i></button>
-            <span id="nivelLabel"
-                style="font-size:0.7rem; font-weight:800; color:var(--accent-main); font-family:var(--font-mono)"></span>
-            <button class="mobile-toggle" onclick="toggleSidebar('right')"><i data-lucide="list-checks"></i></button>
+            <button class="mobile-toggle" onclick="toggleSidebar('left')"><i data-lucide="user-plus"></i></button>
+            <span id="nivelLabel" style="font-size:0.75rem; font-weight:800; color:var(--accent-main); font-family:var(--font-mono); background:rgba(16,185,129,0.1); padding:4px 10px; border-radius:20px"></span>
+            <button class="mobile-toggle" onclick="toggleSidebar('right')"><i data-lucide="layers"></i></button>
         </div>
     </div>
 
     <div class="main">
         <div class="panel-left" id="sidebarLeft">
             <div class="panel-section">
-                <label class="panel-label">Caso Activo</label>
-                <div style="display:flex; align-items:center; gap:0.75rem">
-                    <div class="chat-avatar" id="currentCasoIcon" style="width:32px; height:32px"></div>
+                <label class="panel-label"><i data-lucide="target" style="width:14px"></i> Caso Activo</label>
+                <div style="display:flex; align-items:center; gap:1rem; background:var(--bg-tertiary); padding:1rem; border-radius:var(--radius); border:1px solid var(--border)">
+                    <div class="chat-avatar" id="currentCasoIcon" style="width:40px; height:40px; border-radius:10px"></div>
                     <div>
-                        <div id="currentCasoName" style="font-weight:700; font-size:0.85rem"></div>
-                        <div id="currentNivelName" style="font-size:0.7rem; color:var(--text-muted)"></div>
+                        <div id="currentCasoName" style="font-weight:800; font-size:1rem"></div>
+                        <div id="currentNivelName" style="font-size:0.75rem; color:var(--text-secondary)"></div>
                     </div>
                 </div>
             </div>
             <div class="panel-section">
-                <label class="panel-label">Stakeholders</label>
-                <div id="rolesList" style="display:grid; gap:0.5rem"></div>
+                <label class="panel-label"><i data-lucide="users" style="width:14px"></i> Stakeholders</label>
+                <div id="rolesList" style="display:grid; gap:0.75rem"></div>
             </div>
             <div class="panel-section" style="margin-top:auto; border-bottom:none">
-                <div style="display:grid; gap:0.5rem">
-                    <button class="card" style="padding:0.75rem; text-align:left" onclick="generateIEEE()"><i
-                            data-lucide="file-text" style="vertical-align:middle; margin-right:0.5rem"></i> IEEE
-                        830</button>
-                    <button class="card" style="padding:0.75rem; text-align:left" onclick="evaluateSession()"><i
-                            data-lucide="bar-chart-3" style="vertical-align:middle; margin-right:0.5rem"></i>
-                        Evaluación</button>
-                    <button class="card" style="padding:0.75rem; text-align:left" onclick="resetSession()"><i
-                            data-lucide="refresh-cw" style="vertical-align:middle; margin-right:0.5rem"></i>
-                        Reiniciar</button>
+                <div style="display:grid; gap:0.75rem">
+                    <button class="card selected" style="padding:1rem; text-align:left; border-style:dashed" onclick="generateIEEE()"><i data-lucide="file-text" style="vertical-align:middle; margin-right:0.75rem"></i> IEEE 830</button>
+                    <button class="card" style="padding:1rem; text-align:left" onclick="evaluateSession()"><i data-lucide="line-chart" style="vertical-align:middle; margin-right:0.75rem"></i> Evaluación</button>
+                    <button class="card" style="padding:1rem; text-align:left; color:#f87171" onclick="resetSession()"><i data-lucide="power" style="vertical-align:middle; margin-right:0.75rem"></i> Reiniciar</button>
                 </div>
             </div>
         </div>
 
         <div class="panel-center">
-            <div class="chat-header">
+            <div class="chat-header glass-panel">
                 <div class="chat-avatar" id="chatAvatar"></div>
                 <div>
-                    <div class="chat-persona-name" id="chatPersonaName"></div>
-                    <div id="chatPersonaRole" style="font-size:0.75rem; color:var(--text-muted)"></div>
+                    <div class="chat-persona-name" id="chatPersonaName" style="font-weight:800; font-size:1.1rem"></div>
+                    <div id="chatPersonaRole" style="font-size:0.8rem; color:var(--text-secondary)"></div>
+                </div>
+                <div style="margin-left:auto; display:flex; align-items:center; gap:0.5rem">
+                    <div style="width:8px; height:8px; background:var(--accent-main); border-radius:50%; box-shadow:0 0 10px var(--accent-main)"></div>
+                    <span style="font-size:0.7rem; font-weight:700; color:var(--accent-main); letter-spacing:0.05em">LIVE</span>
                 </div>
             </div>
             <div class="chat-messages" id="chatMessages"></div>
             <div class="chat-input-area">
                 <div class="chat-input-wrap">
-                    <textarea class="chat-input" id="chatInput" placeholder="Pregunta algo..." rows="1"
-                        onkeydown="handleInputKey(event)"></textarea>
-                    <button class="btn-primary" style="padding:0.5rem 1rem" id="btnSend" onclick="sendMessage()"><i
-                            data-lucide="send"></i></button>
+                    <textarea class="chat-input" id="chatInput" placeholder="Formular pregunta técnica..." rows="1" onkeydown="handleInputKey(event)"></textarea>
+                    <button class="btn-primary" id="btnSend" onclick="sendMessage()"><i data-lucide="send"></i></button>
                 </div>
             </div>
         </div>
@@ -551,70 +219,60 @@
         <div class="panel-right" id="sidebarRight">
             <div class="panel-section">
                 <div style="display:flex; justify-content:space-between; align-items:center">
-                    <label class="panel-label" style="margin-bottom:0">Requisitos</label>
-                    <span id="reqsCount"
-                        style="background:var(--accent-main); color:#000; font-size:0.7rem; font-weight:800; padding:2px 6px; border-radius:10px">0</span>
+                    <label class="panel-label" style="margin-bottom:0">Requerimientos</label>
+                    <span id="reqsCount" style="background:var(--accent-main); color:#000; font-size:0.75rem; font-weight:900; padding:4px 10px; border-radius:10px">0</span>
                 </div>
             </div>
-            <div id="reqsList" style="flex:1; overflow-y:auto; padding:1rem; display:grid; gap:0.75rem"></div>
+            <div id="reqsList" style="flex:1; overflow-y:auto; padding:1.5rem; display:grid; gap:1rem"></div>
         </div>
     </div>
 
     <!-- MODALS -->
-    <div id="addReqModal" class="setup-screen hidden"
-        style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
-        <div class="setup-container" style="max-width:480px">
-            <h2 class="card-title" style="font-size:1.25rem; margin-bottom:1.5rem">Capturar Requisito</h2>
-            <textarea id="reqDesc" class="chat-input"
-                style="width:100%; height:120px; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary); margin-bottom:1rem"
-                placeholder="Descripción..."></textarea>
-            <div style="display:flex; gap:0.75rem">
-                <button class="card" style="flex:1" onclick="closeModal('addReqModal')">Cancelar</button>
-                <button class="btn-primary" style="flex:1" onclick="saveReq()">Guardar</button>
+    <div id="addReqModal" class="setup-screen hidden" style="background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:200">
+        <div class="setup-container" style="max-width:520px; border-color:var(--accent-main)">
+            <h2 class="card-title" style="font-size:1.5rem; margin-bottom:1.5rem">Nuevo Requisito</h2>
+            <textarea id="reqDesc" class="chat-input" style="width:100%; height:160px; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary); margin-bottom:1.5rem" placeholder="Descripción..."></textarea>
+            <div style="display:flex; gap:1rem">
+                <button class="card" style="flex:1" onclick="closeModal('addReqModal')">Descartar</button>
+                <button class="btn-primary" style="flex:1" onclick="saveReq()">Capturar RF</button>
             </div>
         </div>
     </div>
-    <div id="ieeeModal" class="setup-screen hidden"
-        style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
-        <div class="setup-container" style="max-width:800px; height:85vh; display:flex; flex-direction:column">
-            <h2 class="card-title">Documento IEEE 830</h2>
-            <div id="ieeeOutput"
-                style="flex:1; background:var(--bg-tertiary); padding:1.5rem; border-radius:var(--radius); overflow-y:auto; font-family:var(--font-mono); font-size:0.85rem; border:1px solid var(--border); white-space:pre-wrap; margin-top:1rem">
-            </div>
-            <div style="display:flex; gap:0.75rem; margin-top:1.5rem">
+
+    <div id="ieeeModal" class="setup-screen hidden" style="background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:200">
+        <div class="setup-container" style="max-width:900px; height:85vh; display:flex; flex-direction:column">
+            <h2 class="card-title">IEEE 830 Specification</h2>
+            <div id="ieeeOutput" style="flex:1; background:var(--bg-primary); padding:2rem; border-radius:var(--radius); overflow-y:auto; font-family:var(--font-mono); font-size:0.9rem; border:1px solid var(--border); white-space:pre-wrap; margin-top:1rem"></div>
+            <div style="display:flex; gap:1rem; margin-top:2rem">
                 <button class="card" style="flex:1" onclick="closeModal('ieeeModal')">Cerrar</button>
                 <button class="btn-primary" style="flex:1" onclick="copyText('ieeeOutput')">Copiar</button>
             </div>
         </div>
     </div>
-    <div id="evalModal" class="setup-screen hidden"
-        style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
-        <div class="setup-container" style="max-width:560px">
-            <h2 class="card-title">Evaluación</h2>
-            <div id="evalContent"
-                style="background:var(--bg-tertiary); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border); font-size:0.9rem; margin-top:1rem">
-            </div>
-            <button class="card" style="width:100%; margin-top:1.5rem" onclick="closeModal('evalModal')">Cerrar</button>
+
+    <div id="evalModal" class="setup-screen hidden" style="background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:200">
+        <div class="setup-container" style="max-width:600px">
+            <h2 class="card-title">Feedback del Analista</h2>
+            <div id="evalContent" style="background:var(--bg-tertiary); padding:2rem; border-radius:var(--radius); border:1px solid var(--border); font-size:0.95rem; line-height:1.8"></div>
+            <button class="btn-primary" style="width:100%; margin-top:2rem" onclick="closeModal('evalModal')">Continuar</button>
         </div>
     </div>
 
-    <div class="loading-overlay hidden" id="loadingOverlay">
-        <div class="spinner"></div>
-    </div>
+    <div class="loading-overlay hidden" id="loadingOverlay"><div class="spinner"></div></div>
 
     <script>
         let state = { apiKey: '', caso: null, rol: 'sponsor', nivel: null, messages: [], requirements: [], rolesVisited: new Set(), userMsgCount: 0, pendingCapture: null };
         const CASOS = {
-            1: { icon: 'hospital', name: 'Clínica Médica', roles: { sponsor: { icon: 'user-cog', name: 'Dr. Roberto', title: 'Médico y Dueño' }, cliente: { icon: 'briefcase', name: 'Laura', title: 'Directora Administrativa' }, usuario: { icon: 'users', name: 'Carlos', title: 'Recepcionista' } } },
-            2: { icon: 'utensils', name: 'Restaurante', roles: { sponsor: { icon: 'circle-dollar-sign', name: 'Martín', title: 'Socio' }, cliente: { icon: 'chef-hat', name: 'Sofía', title: 'Gerente' }, usuario: { icon: 'calculator', name: 'Diego', title: 'Cajero' } } },
-            3: { icon: 'graduation-cap', name: 'Universidad', roles: { sponsor: { icon: 'landmark', name: 'Dra. Elena', title: 'Rectora' }, cliente: { icon: 'book-open', name: 'Ing. Gómez', title: 'Jefe Académico' }, usuario: { icon: 'user', name: 'Ana', title: 'Alumna' } } },
-            4: { icon: 'dumbbell', name: 'Gimnasio', roles: { sponsor: { icon: 'trending-up', name: 'Sr. Alejandro', title: 'Inversionista' }, cliente: { icon: 'user-square', name: 'Valeria', title: 'Gerente' }, usuario: { icon: 'clipboard-list', name: 'Lucas', title: 'Recepcionista' } } }
+            1: { icon: 'hospital', name: 'Clínica Médica', roles: { sponsor: { icon: 'user-cog', name: 'Dr. Roberto', title: 'Médico Propietario' }, cliente: { icon: 'briefcase', name: 'Laura', title: 'Dir. Administrativa' }, usuario: { icon: 'users', name: 'Carlos', title: 'Recepcionista Senior' } } },
+            2: { icon: 'utensils', name: 'Restaurante POS', roles: { sponsor: { icon: 'circle-dollar-sign', name: 'Martín', title: 'Socio Inversionista' }, cliente: { icon: 'chef-hat', name: 'Sofía', title: 'Gerente Operativa' }, usuario: { icon: 'calculator', name: 'Diego', title: 'Cajero de Turno' } } },
+            3: { icon: 'graduation-cap', name: 'Gestión Académica', roles: { sponsor: { icon: 'landmark', name: 'Dra. Elena', title: 'Rectora General' }, cliente: { icon: 'book-open', name: 'Ing. Gómez', title: 'Jefe de Sistemas' }, usuario: { icon: 'user', name: 'Ana', title: 'Rep. Estudiantil' } } },
+            4: { icon: 'dumbbell', name: 'Smart Gym Hub', roles: { sponsor: { icon: 'trending-up', name: 'Sr. Alejandro', title: 'Inversionista' }, cliente: { icon: 'user-square', name: 'Valeria', title: 'Gerente' }, usuario: { icon: 'clipboard-list', name: 'Lucas', title: 'Staff Recepción' } } }
         };
         const NIVEL_NAMES = { 1: 'Cooperativo', 2: 'Realista', 3: 'Adversarial' };
 
         window.addEventListener('DOMContentLoaded', () => {
             renderCasosGrid();
-            const savedKey = localStorage.getItem('sk_sim');
+            const savedKey = localStorage.getItem('sk_sim_gemini');
             if (savedKey) try { document.getElementById('apiKeyInput').value = atob(savedKey); } catch (e) { }
             lucide.createIcons();
         });
@@ -624,7 +282,7 @@
                 <div class="card" onclick="selectCaso(${id})" id="caso-${id}">
                     <div class="card-icon"><i data-lucide="${c.icon}"></i></div>
                     <div class="card-title">${c.name}</div>
-                    <div class="card-desc">Simulación de elicitación técnica.</div>
+                    <div class="card-desc">Entrenamiento en ${c.name}.</div>
                 </div>
             `).join('');
             lucide.createIcons();
@@ -632,36 +290,52 @@
 
         function selectCaso(n) { state.caso = n; document.querySelectorAll('#casosGrid .card').forEach(c => c.classList.remove('selected')); document.getElementById(`caso-${n}`).classList.add('selected'); checkSetupReady(); }
         function selectNivel(n) { state.nivel = n; document.querySelectorAll('.niveles-grid .card').forEach(c => c.classList.remove('selected')); document.getElementById(`nivel-${n}`).classList.add('selected'); checkSetupReady(); }
-        function checkSetupReady() { const key = document.getElementById('apiKeyInput').value.trim(); document.getElementById('btnStart').disabled = !(state.caso && state.nivel && key.length > 10); }
+        function checkSetupReady() { const key = document.getElementById('apiKeyInput').value.trim(); document.getElementById('btnStart').disabled = !(state.caso && state.nivel && key.length > 20); }
 
         async function startSession() {
             state.apiKey = document.getElementById('apiKeyInput').value.trim();
-            localStorage.setItem('sk_sim', btoa(state.apiKey));
+            localStorage.setItem('sk_sim_gemini', btoa(state.apiKey));
             state.rolesVisited.add(state.rol);
             document.getElementById('setupScreen').classList.add('hidden');
-            updateUI();
-            showLoading();
-            await initPersonaje();
-            hideLoading();
+            updateUI(); showLoading('CONECTANDO CON GEMINI...'); await initPersonaje(); hideLoading();
         }
 
+        async function callGemini(userMsg, systemOverride = null) {
+            const PERFILES = {
+                1: { sponsor: 'Dr. Roberto, dueño conservador. Cuida el dinero.', cliente: 'Laura, administrativa entusiasta.', usuario: 'Carlos, recepcionista escéptico.' },
+                2: { sponsor: 'Martín, socio enfocado en ROI.', cliente: 'Sofía, gerente agobiada.', usuario: 'Diego, cajero harto de fallos.' },
+                3: { sponsor: 'Dra. Elena, rectora visionaria.', cliente: 'Ing. Gómez, nostálgico del sistema viejo.', usuario: 'Ana, alumna exigente.' },
+                4: { sponsor: 'Sr. Alejandro, inversionista obsesionado con el fraude.', cliente: 'Valeria, gerente abrumada.', usuario: 'Lucas, recepcionista saturado.' }
+            };
+            const system = systemOverride || `ACTÚA COMO: ${PERFILES[state.caso][state.rol]} DIFICULTAD: ${NIVEL_NAMES[state.nivel]}. No menciones que eres IA. Responde corto. No des soluciones técnicas.`;
+            const contents = [{ role: 'user', parts: [{ text: "Contexto: " + system }] }, { role: 'model', parts: [{ text: "Entendido." }] }];
+            state.messages.forEach(m => contents.push({ role: m.role === 'user' ? 'user' : 'model', parts: [{ text: m.content }] }));
+            if (userMsg) contents.push({ role: 'user', parts: [{ text: userMsg }] });
+
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${state.apiKey}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents })
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error?.message || 'Error API');
+            return data.candidates[0].content.parts[0].text;
+        }
+
+        async function initPersonaje() { try { const reply = await callGemini('Preséntate brevemente y espera mi pregunta.'); state.messages.push({ role: 'assistant', content: reply }); addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]); } catch (e) { addMessage('assistant', 'Error: ' + e.message, null); } }
         function updateUI() {
             const caso = CASOS[state.caso];
             document.getElementById('nivelLabel').textContent = `N${state.nivel}: ${NIVEL_NAMES[state.nivel].toUpperCase()}`;
             document.getElementById('currentCasoName').textContent = caso.name;
             document.getElementById('currentNivelName').textContent = NIVEL_NAMES[state.nivel];
             document.getElementById('currentCasoIcon').innerHTML = `<i data-lucide="${caso.icon}"></i>`;
-            updateRolesList();
-            updateChatHeader();
-            renderReqs();
-            lucide.createIcons();
+            updateRolesList(); updateChatHeader(); renderReqs(); lucide.createIcons();
         }
 
         function updateRolesList() {
             document.getElementById('rolesList').innerHTML = Object.entries(CASOS[state.caso].roles).map(([key, r]) => `
                 <button class="card ${key === state.rol ? 'selected' : ''}" style="padding:0.75rem; text-align:left; display:flex; align-items:center; gap:0.75rem; width:100%" onclick="switchRol('${key}')">
                     <i data-lucide="${r.icon}" style="width:16px"></i>
-                    <div><div style="font-weight:700; font-size:0.8rem">${r.name}</div><div style="font-size:0.7rem; opacity:0.6">${r.title}</div></div>
+                    <div><div style="font-weight:800; font-size:0.8rem">${r.name}</div><div style="font-size:0.7rem; opacity:0.6">${r.title}</div></div>
                 </button>
             `).join('');
             lucide.createIcons();
@@ -675,156 +349,69 @@
             lucide.createIcons();
         }
 
-        async function switchRol(newRol) {
-            if (newRol === state.rol) return;
-            state.rol = newRol; state.messages = []; state.rolesVisited.add(newRol);
-            updateUI(); showLoading(); await initPersonaje(); hideLoading();
-        }
+        async function switchRol(newRol) { if (newRol === state.rol) return; state.rol = newRol; state.messages = []; state.rolesVisited.add(newRol); updateUI(); showLoading(); await initPersonaje(); hideLoading(); }
 
         function addMessage(role, content, rolData) {
-            const div = document.createElement('div');
-            div.className = `msg ${role}`;
+            const div = document.createElement('div'); div.className = `msg ${role}`;
             const icon = role === 'user' ? 'user' : (rolData ? rolData.icon : 'info');
             div.innerHTML = `
-                <div class="chat-avatar" style="width:32px; height:32px"><i data-lucide="${icon}"></i></div>
+                <div class="chat-avatar" style="width:32px; height:32px; border-radius:10px; background:var(--bg-tertiary)"><i data-lucide="${icon}"></i></div>
                 <div style="flex:1">
                     <div class="msg-bubble">${content}</div>
                     <div style="font-size:0.65rem; color:var(--text-muted); margin-top:0.4rem; display:flex; align-items:center; gap:0.5rem">
-                        <span>${role === 'user' ? 'Tú' : rolData?.name || 'Sistema'}</span>
+                        <span>${role === 'user' ? 'ANALISTA' : rolData?.name.toUpperCase() || 'SISTEMA'}</span>
                         ${role === 'assistant' ? `<button onclick="openAddReqModal(\`${content.replace(/'/g, "\\'").replace(/"/g, '&quot;')}\`)" style="background:none; border:none; color:var(--accent-main); cursor:pointer; font-weight:800">+ REQUISITO</button>` : ''}
                     </div>
                 </div>`;
-            document.getElementById('chatMessages').appendChild(div);
-            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
-            lucide.createIcons();
+            document.getElementById('chatMessages').appendChild(div); document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; lucide.createIcons();
         }
 
         async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const text = input.value.trim();
+            const input = document.getElementById('chatInput'); const text = input.value.trim();
             if (!text || document.getElementById('btnSend').disabled) return;
-            input.value = ''; state.userMsgCount++;
-            addMessage('user', text, null);
-            state.messages.push({ role: 'user', content: text });
-            document.getElementById('btnSend').disabled = true;
-            try {
-                const reply = await callClaude(null);
-                state.messages.push({ role: 'assistant', content: reply });
-                addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]);
-            } catch (e) { addMessage('assistant', `Error: ${e.message}`, null); }
+            input.value = ''; state.userMsgCount++; addMessage('user', text, null);
+            state.messages.push({ role: 'user', content: text }); document.getElementById('btnSend').disabled = true;
+            try { const reply = await callGemini(null); state.messages.push({ role: 'assistant', content: reply }); addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]); }
+            catch (e) { addMessage('assistant', `Error: ${e.message}`, null); }
             document.getElementById('btnSend').disabled = false;
         }
 
         function openAddReqModal(prefill = '') { state.pendingCapture = prefill; document.getElementById('reqDesc').value = prefill; document.getElementById('addReqModal').classList.remove('hidden'); }
         function saveReq() {
-            const desc = document.getElementById('reqDesc').value.trim();
-            if (!desc) return;
+            const desc = document.getElementById('reqDesc').value.trim(); if (!desc) return;
             state.requirements.push({ id: `RF-${String(state.requirements.length + 1).padStart(3, '0')}`, desc, source: CASOS[state.caso].roles[state.rol].name });
             closeModal('addReqModal'); renderReqs();
         }
+
         function renderReqs() {
             document.getElementById('reqsCount').textContent = state.requirements.length;
             document.getElementById('reqsList').innerHTML = state.requirements.map(r => `
                 <div class="card" style="padding:0.75rem; border-left:3px solid var(--accent-main)">
-                    <div style="font-size:0.65rem; font-weight:800; color:var(--accent-main)">${r.id}</div>
+                    <div style="font-size:0.7rem; font-weight:900; color:var(--accent-main)">${r.id}</div>
                     <div style="font-size:0.8rem">${r.desc.substring(0, 100)}...</div>
                 </div>
             `).join('') || '<div style="text-align:center; padding:2rem; color:var(--text-muted); font-size:0.8rem">Vacio.</div>';
         }
 
-        async function callClaude(userMsg, systemOverride = null) {
-            const PERFILES = {
-                1: {
-                    sponsor: `Eres el Dr. Roberto, médico dueño de una clínica privada. Llevas 12 años operando con papel y Excel. Aprobaste este proyecto después de recibir una multa regulatoria. Tus prioridades son: presupuesto cerrado, cero riesgos legales, reputación. Frase: "¿Y eso cuánto nos va a costar adicional?"`,
-                    cliente: `Eres Laura, Directora Administrativa. Llevas años pidiendo un sistema. Prioridades: reportes gerenciales, control de inventario, métricas de flujo. Frase: "Necesito poder ver todo desde un solo lugar."`,
-                    usuario: `Eres Carlos, recepcionista. Has visto fracasar dos sistemas antes. Escéptico. Prioridades: registro rápido, interfaz simple, no agregar pasos. Frase: "Con tal de que sea rápido, yo lo uso."`,
-                },
-                2: {
-                    sponsor: `Eres Martín, socio capitalista de restaurantes. Quieres ROI en < 8 meses. Desconfías de tecnología cara. Frase: "¿Para qué necesitamos eso si con una tablet y una app ya funciona?"`,
-                    cliente: `Eres Sofía, gerente de sucursal. Prioridades: gestión de mesas, supervisión, cuadre de caja. Frase: "El problema es que no tenemos visibilidad de nada."`,
-                    usuario: `Eres Diego, cajero. Prioridades: interfaz táctil ágil, cancelaciones simples, estabilidad. Frase: "El viernes pasado se cayó tres veces en hora pico."`,
-                },
-                3: {
-                    sponsor: `Eres la Dra. Elena, Rectora. Prioridades: imagen institucional, seguridad, escalabilidad. Frase: "Queremos estar al nivel de las mejores universidades del país."`,
-                    cliente: `Eres el Ing. Gómez, Jefe de Gestión Académica. Apego al sistema actual de 15 años. Prioridades: migración sin pérdida, auditorías. Frase: "Habría que ver cómo se maneja la migración de datos."`,
-                    usuario: `Eres Ana, alumna. Prioridades: app móvil, claridad en horarios, estabilidad en inscripciones. Frase: "Si mi banco me muestra movimientos en tiempo real, ¿por qué la universidad no?"`,
-                },
-                4: {
-                    sponsor: `Eres el Sr. Alejandro, inversionista de gimnasio. Prioridades: eliminar fraudes, automatización. Frase: "Cada función tiene que reducir un costo o aumentar un ingreso."`,
-                    cliente: `Eres Valeria, Gerente General. Datos dispersos en 3 sistemas. Prioridades: control de membresías, retención. Frase: "El problema es que no tengo un solo lugar donde ver todo."`,
-                    usuario: `Eres Lucas, recepcionista. Mañanas caóticas, 40 check-ins en 15 min. Frase: "No puedo tardar más de 3 segundos por persona."`,
-                }
-            };
-
-            const perfil = PERFILES[state.caso]?.[state.rol] || "Stakeholder profesional.";
-            const nivelInstruccion = {
-                1: 'Eres cooperativo. Responde con claridad.',
-                2: 'Tienes agenda propia. Omite detalles obvios.',
-                3: 'Puedes contradecirte levemente. Minimiza problemas graves.'
-            }[state.nivel] || 'Responde profesionalmente.';
-
-            const system = systemOverride || `${perfil} NIVEL DE DIFICULTAD: ${NIVEL_NAMES[state.nivel]}. ${nivelInstruccion} REGLAS: Responde SOLO como el personaje. No ofrezcas soluciones técnicas, solo describe tus necesidades o problemas. Si te preguntan algo fuera de tu área, redirige al compañero adecuado.`;
-
-            const apiMessages = state.messages.map(m => ({ role: m.role, content: m.content }));
-            if (userMsg) apiMessages.push({ role: 'user', content: userMsg });
-
-            try {
-                const res = await fetch('https://api.anthropic.com/v1/messages', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': state.apiKey,
-                        'anthropic-version': '2023-06-01',
-                        'anthropic-dangerous-direct-browser-access': 'true'
-                    },
-                    body: JSON.stringify({
-                        model: 'claude-3-5-sonnet-20241022',
-                        max_tokens: 1024,
-                        system,
-                        messages: apiMessages
-                    })
-                });
-
-                const data = await res.json();
-
-                if (!res.ok) {
-                    throw new Error(data.error?.message || `Error ${res.status}: Fallo en la comunicación con la IA.`);
-                }
-
-                if (data.content && data.content.length > 0 && data.content[0].text) {
-                    return data.content[0].text;
-                } else {
-                    console.error('Respuesta inesperada de la API:', data);
-                    throw new Error('La IA no devolvió contenido válido. Por favor, intenta de nuevo.');
-                }
-            } catch (error) {
-                console.error('Error en callClaude:', error);
-                throw error;
-            }
-        }
-
-        async function initPersonaje() { try { const reply = await callClaude('Preséntate brevemente.'); state.messages.push({ role: 'assistant', content: reply }); addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]); } catch (e) { } }
         function toggleSidebar(side) { if (side === 'left') document.getElementById('sidebarLeft').classList.toggle('open'); else document.getElementById('sidebarRight').classList.toggle('active'); }
         function handleInputKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
-        function showLoading() { document.getElementById('loadingOverlay').classList.remove('hidden'); }
+        function showLoading(t = 'PROCESANDO...') { document.getElementById('loadingOverlay').classList.remove('hidden'); }
         function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         function resetSession() { if (confirm('¿Reiniciar?')) location.reload(); }
         function copyText(id) { navigator.clipboard.writeText(document.getElementById(id).textContent); alert('Copiado'); }
         async function generateIEEE() {
-            document.getElementById('ieeeModal').classList.remove('hidden');
-            document.getElementById('ieeeOutput').textContent = 'Generando borrador IEEE 830...';
+            document.getElementById('ieeeModal').classList.remove('hidden'); document.getElementById('ieeeOutput').textContent = 'Generando borrador IEEE 830...';
             const reqs = state.requirements.map(r => `${r.id}: ${r.desc}`).join('\n');
-            const res = await callClaude(`Genera un documento IEEE 830 técnico basado en estos requisitos: ${reqs}`);
+            const res = await callGemini(`Genera un documento IEEE 830 técnico basado en estos requisitos: ${reqs}`);
             document.getElementById('ieeeOutput').textContent = res;
         }
         async function evaluateSession() {
-            document.getElementById('evalModal').classList.remove('hidden');
-            document.getElementById('evalContent').textContent = 'Evaluando...';
-            const res = await callClaude('Evalúa mi desempeño en esta entrevista de requerimientos. Dame consejos técnicos.');
+            document.getElementById('evalModal').classList.remove('hidden'); document.getElementById('evalContent').textContent = 'Evaluando...';
+            const conv = state.messages.map(m => `${m.role.toUpperCase()}: ${m.content}`).join('\n');
+            const res = await callGemini(`Evalúa mi desempeño en esta entrevista de requerimientos: ${conv}. Dame un puntaje y consejos.`);
             document.getElementById('evalContent').textContent = res;
         }
     </script>
 </body>
-
 </html>

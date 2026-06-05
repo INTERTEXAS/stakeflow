@@ -2,28 +2,28 @@
 
 ### Entrena tu capacidad de análisis con stakeholders simulados por IA de alta fidelidad.
 
-[![Versión](https://img.shields.io/badge/Versión-3.0-emerald?style=for-the-badge)](https://github.com/INTERTEXAS/stakeflow)
+[![Versión](https://img.shields.io/badge/Versión-3.1-emerald?style=for-the-badge)](https://github.com/INTERTEXAS/stakeflow)
+[![Motor](https://img.shields.io/badge/IA-Google%20Gemini-blue?style=for-the-badge)](https://aistudio.google.com)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-zinc?style=for-the-badge)](LICENSE)
-[![Tecnología](https://img.shields.io/badge/IA-Claude%203.5%20Sonnet-blue?style=for-the-badge)](https://anthropic.com)
 
 ---
 
 ## 💡 La Visión detrás de StakeFlow
 
-En el mundo real del desarrollo de software, los requerimientos no vienen en una lista perfecta; vienen de personas con emociones, sesgos, miedos y agendas ocultas. **StakeFlow** nace para cerrar la brecha entre la teoría académica y la práctica profesional.
+En el mundo real del desarrollo de software, los requerimientos no vienen en una lista perfecta; vienen de personas con emociones, sesgos y agendas ocultas. **StakeFlow** es una herramienta de grado industrial diseñada para cerrar la brecha entre la teoría académica y la práctica profesional.
 
-Ya no necesitas esperar a un proyecto real para enfrentarte a un cliente difícil o a un usuario escéptico. Con StakeFlow, puedes iterar, fallar y perfeccionar tu técnica de entrevista en un entorno seguro, potenciado por la inteligencia artificial más avanzada.
+Ya no necesitas esperar a un proyecto real para enfrentarte a un cliente difícil. Con StakeFlow, puedes perfeccionar tu técnica de entrevista en un entorno seguro potenciado por **Google Gemini API**, garantizando un acceso **gratuito y de alto rendimiento**.
 
 ---
 
-## 🔥 Por qué es diferente
+## 🔥 Innovaciones en la Versión 3.1
 
-A diferencia de un simple chat, StakeFlow está diseñado con una arquitectura de **conciencia de contexto** y **niveles de fricción dinámica**:
+Hemos evolucionado el núcleo de la aplicación para ofrecer una experiencia más robusta y accesible:
 
-- **Personalidades Profundas:** Interactúa con perfiles que tienen historia, cargos específicos y "puntos de dolor" reales.
-- **Dificultad Evolutiva:** Desde clientes que te facilitan todo hasta stakeholders adversariales que pondrán a prueba tu paciencia y metodología.
-- **La Técnica de "La Patada":** Si preguntas algo que el stakeholder no domina, te redirigirá orgánicamente al responsable adecuado, obligándote a navegar el mapa de poder de la organización.
-- **Captura Inteligente:** No pierdas el hilo de la conversación. Captura requerimientos funcionales y no funcionales con un solo clic mientras fluye la entrevista.
+- **Cerebro Gemini (Free Tier):** Migración total a la API de Google Gemini 1.5 Flash. Obtén respuestas instantáneas y razonamiento complejo sin muros de pago.
+- **Diseño de Vanguardia (Zinc 2.0):** Implementación de **Glassmorphism** y refinamiento visual basado en principios de diseño de alto nivel.
+- **Personalidades Profundas:** Stakeholders con perfiles psicológicos únicos que reaccionan a tu tono y precisión técnica.
+- **Captura Inteligente:** Sistema de documentación en tiempo real que permite capturar RFs con un clic sin romper el flujo de la entrevista.
 
 ---
 
@@ -31,54 +31,37 @@ A diferencia de un simple chat, StakeFlow está diseñado con una arquitectura d
 
 | Sector | El Desafío | Perfiles Clave |
 |:---:|:---|:---|
-| **Salud** | Migrar 12 años de papel a digital bajo presión regulatoria. | Dueño Conservador, Admin Entusiasta, Recepcionista Escéptico. |
-| **Gastronomía** | Controlar la fuga de capital en una cadena sin visibilidad operativa. | Inversionista (ROI), Gerente de Operaciones, Cajero. |
-| **Académico** | Modernizar la experiencia de 8,000 alumnos sin romper el historial. | Rectora Visionaria, Jefe de Gestión (Nostálgico), Alumna Exigente. |
-| **Fitness** | Detener el fraude de accesos y optimizar la retención de socios. | Socio Capitalista, Gerente de Sucursal, Recepcionista. |
+| **Salud** | Digitalización de una clínica bajo presión legal. | Dueño Conservador, Admin Entusiasta, Recepcionista Escéptico. |
+| **Gastronomía** | Control de fugas en una cadena sin POS. | Socio Inversionista, Gerente Operativa, Cajero. |
+| **Académico** | Modernización de una universidad de 8k alumnos. | Rectora Visionaria, Jefe de Sistemas, Alumna. |
+| **Fitness** | Optimización de accesos y retención de socios. | Inversionista Principal, Gerente, Staff. |
 
 ---
 
-## 🛠️ Stack Tecnológico de Vanguardia
+## 🛠️ Stack Tecnológico
 
-Hemos reconstruido StakeFlow para que no solo funcione bien, sino que se sienta como una herramienta de grado industrial:
-
-- **UI/UX:** Sistema de diseño **Zinc Dark**, optimizado para la concentración y legibilidad prolongada.
-- **Iconografía:** **Lucide Icons** para una interfaz limpia y sin distracciones.
-- **Cerebro:** Integración nativa con **Claude 3.5 Sonnet**, garantizando respuestas coherentes, técnicas y profundamente humanas.
-- **Performance:** Ejecución 100% en cliente. Sin servidores, sin tiempos de espera, total privacidad.
+- **IA:** Google Gemini 1.5 Flash (via Google AI Studio).
+- **UI:** Sistema de diseño **Zinc Dark** + Glassmorphism.
+- **Iconografía:** Lucide Icons (Vectorial).
+- **Tipografía:** Geist Sans + JetBrains Mono.
 
 ---
 
 ## 🚀 Cómo empezar en 30 segundos
 
-1. **Clona el motor:**
-   ```bash
-   git clone https://github.com/INTERTEXAS/stakeflow.git
-   ```
-2. **Ejecuta:**
-   Abre el archivo `index.html` en tu navegador preferido.
-3. **Conecta:**
-   Ingresa tu API Key de Anthropic (se guarda localmente en tu navegador) y selecciona tu caso de entrenamiento.
+1. **Obtén tu Clave:** Genera una clave gratuita en [Google AI Studio](https://aistudio.google.com/).
+2. **Ejecuta:** Abre `index.html` en tu navegador.
+3. **Entrena:** Ingresa tu clave, selecciona un nivel de dificultad y comienza la elicitación.
 
 ---
 
-## 📈 El Ciclo de Aprendizaje Profesional
+## 📈 Ciclo Profesional de Elicitación
 
-1. **Elicita:** Entrevista al stakeholder y detecta inconsistencias.
-2. **Captura:** Documenta los requerimientos mientras ocurren.
-3. **Genera:** Obtén un borrador base en formato **IEEE 830** listo para pulir.
-4. **Evalúa:** Recibe una crítica constructiva sobre tu desempeño, preguntas realizadas y áreas que olvidaste cubrir.
-
----
-
-## 🤝 Únete a la Evolución
-
-StakeFlow es un proyecto de código abierto para la comunidad de ingeniería de software. Si tienes una idea para un nuevo perfil de stakeholder o un escenario de negocio complejo, ¡queremos tu contribución!
-
-1. Haz un **Fork** del proyecto.
-2. Crea tu rama de función (`git checkout -b feature/nuevo-escenario`).
-3. Envía un **Pull Request**.
+1. **Entrevista:** Detecta inconsistencias y necesidades reales.
+2. **Captura:** Documenta requerimientos funcionales al instante.
+3. **Genera:** Exporta tu borrador base en formato **IEEE 830**.
+4. **Evalúa:** Recibe una auditoría técnica sobre tu desempeño y consejos de mejora.
 
 ---
 
-Desarrollado con pasión para la próxima generación de Analistas de Software. 🚀
+Desarrollado para la próxima generación de Ingenieros de Software. 🚀
