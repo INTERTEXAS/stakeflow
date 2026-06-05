@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StakeFlow — Simulador de Stakeholders</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
@@ -16,8 +13,8 @@
             --bg-tertiary: #27272a;
             --bg-card: #18181b;
             --bg-hover: #27272a;
-            --accent-main: #10b981; /* Emerald */
-            --accent-secondary: #0ea5e9; /* Sky */
+            --accent-main: #10b981;
+            --accent-secondary: #0ea5e9;
             --text-primary: #fafafa;
             --text-secondary: #a1a1aa;
             --text-muted: #52525b;
@@ -29,12 +26,7 @@
             --radius-lg: 10px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: var(--font-display);
             background: var(--bg-primary);
@@ -46,353 +38,91 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* SCROLLBAR */
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: var(--bg-primary); }
         ::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 20px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--accent-main); }
 
-        /* ICONS */
-        .lucide {
-            width: 1.25em;
-            height: 1.25em;
-            stroke-width: 2;
-        }
+        .lucide { width: 1.25em; height: 1.25em; stroke-width: 2; }
 
-        /* HEADER */
         .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 1.5rem;
-            height: 60px;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-            z-index: 50;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem; height: 60px; background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 50;
         }
-
-        .header-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
+        .header-logo { display: flex; align-items: center; gap: 0.75rem; }
         .header-logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--accent-main);
-            border-radius: var(--radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000;
+            width: 32px; height: 32px; background: var(--accent-main);
+            border-radius: var(--radius); display: flex; align-items: center;
+            justify-content: center; color: #000;
         }
+        .header-title { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.025em; }
+        .header-version { font-size: 0.75rem; font-family: var(--font-mono); color: var(--text-muted); margin-left: 0.5rem; }
 
-        .header-title {
-            font-size: 1.125rem;
-            font-weight: 700;
-            letter-spacing: -0.025em;
-        }
-
-        .header-version {
-            font-size: 0.75rem;
-            font-family: var(--font-mono);
-            color: var(--text-muted);
-            margin-left: 0.5rem;
-        }
-
-        /* MOBILE MENU TOGGLE */
         .mobile-toggle {
-            display: none;
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 0.5rem;
-            border-radius: var(--radius);
-            cursor: pointer;
+            display: none; background: none; border: 1px solid var(--border);
+            color: var(--text-primary); padding: 0.5rem; border-radius: var(--radius); cursor: pointer;
         }
 
-        /* MAIN LAYOUT */
-        .main {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-        }
+        .main { display: flex; flex: 1; overflow: hidden; position: relative; }
 
-        /* PANELS */
-        .panel-left, .panel-right {
-            background: var(--bg-secondary);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
+        .panel-left, .panel-right { background: var(--bg-secondary); display: flex; flex-direction: column; overflow: hidden; transition: transform 0.3s ease; }
+        .panel-left { width: 260px; border-right: 1px solid var(--border); }
+        .panel-right { width: 300px; border-left: 1px solid var(--border); }
+        .panel-section { padding: 1.25rem; border-bottom: 1px solid var(--border); }
+        .panel-label { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 1rem; }
 
-        .panel-left {
-            width: 240px;
-            border-right: 1px solid var(--border);
-        }
+        .setup-screen { position: fixed; inset: 0; background: var(--bg-primary); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1.5rem; }
+        .setup-container { width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; padding: 2rem; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+        .setup-header { text-align: center; margin-bottom: 2.5rem; }
+        .setup-icon { width: 64px; height: 64px; background: var(--accent-main); border-radius: 1.25rem; display: flex; align-items: center; justify-content: center; color: #000; margin: 0 auto 1.5rem; box-shadow: 0 0 40px -10px var(--accent-main); }
+        .setup-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.5rem; }
+        .setup-subtitle { font-size: 0.875rem; color: var(--text-secondary); }
 
-        .panel-right {
-            width: 300px;
-            border-left: 1px solid var(--border);
-        }
-
-        .panel-section {
-            padding: 1.25rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .panel-label {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-
-        /* SETUP SCREEN */
-        .setup-screen {
-            position: fixed;
-            inset: 0;
-            background: var(--bg-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            padding: 1.5rem;
-        }
-
-        .setup-container {
-            width: 100%;
-            max-width: 640px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 2rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-        }
-
-        .setup-header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-
-        .setup-icon {
-            width: 64px;
-            height: 64px;
-            background: var(--accent-main);
-            border-radius: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000;
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 0 40px -10px var(--accent-main);
-        }
-
-        .setup-title {
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: -0.05em;
-            margin-bottom: 0.5rem;
-        }
-
-        .setup-subtitle {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* GRID CARDS */
-        .casos-grid, .roles-grid, .niveles-grid {
-            display: grid;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-
+        .casos-grid, .niveles-grid { display: grid; gap: 0.75rem; margin-bottom: 1.5rem; }
         .casos-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
-        .roles-grid { grid-template-columns: repeat(3, 1fr); }
         .niveles-grid { grid-template-columns: repeat(3, 1fr); }
 
-        .card {
-            padding: 1.25rem;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
+        .card { padding: 1.25rem; background: var(--bg-tertiary); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+        .card:hover { border-color: var(--border-highlight); background: var(--bg-hover); transform: translateY(-2px); }
+        .card.selected { border-color: var(--accent-main); background: rgba(16, 185, 129, 0.05); }
+        .card-icon { color: var(--accent-main); margin-bottom: 0.75rem; }
+        .card-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.25rem; }
+        .card-desc { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; }
 
-        .card:hover {
-            border-color: var(--border-highlight);
-            background: var(--bg-hover);
-            transform: translateY(-2px);
-        }
+        .panel-center { flex: 1; display: flex; flex-direction: column; background: var(--bg-primary); position: relative; }
+        .chat-header { padding: 1rem 1.5rem; background: var(--bg-secondary); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 1rem; }
+        .chat-avatar { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--accent-main); flex-shrink: 0; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
 
-        .card.selected {
-            border-color: var(--accent-main);
-            background: rgba(16, 185, 129, 0.05);
-        }
+        .msg { display: flex; gap: 1rem; max-width: 85%; }
+        .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+        .msg-bubble { padding: 1rem 1.25rem; border-radius: 1.25rem; font-size: 0.925rem; line-height: 1.6; background: var(--bg-secondary); border: 1px solid var(--border); }
+        .msg.user .msg-bubble { background: var(--accent-main); color: #000; border: none; }
 
-        .card-icon {
-            color: var(--accent-main);
-            margin-bottom: 0.75rem;
-        }
+        .chat-input-area { padding: 1.5rem; background: var(--bg-secondary); border-top: 1px solid var(--border); }
+        .chat-input-wrap { max-width: 800px; margin: 0 auto; display: flex; gap: 0.75rem; background: var(--bg-tertiary); padding: 0.5rem; border-radius: var(--radius-lg); border: 1px solid var(--border); }
+        .chat-input { flex: 1; background: none; border: none; color: var(--text-primary); padding: 0.5rem 0.75rem; font-family: var(--font-display); font-size: 0.95rem; outline: none; resize: none; }
 
-        .card-title {
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .card-desc {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-        }
-
-        /* CHAT CENTER */
-        .panel-center {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-primary);
-            position: relative;
-        }
-
-        .chat-header {
-            padding: 1rem 1.5rem;
-            background: var(--bg-secondary);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .chat-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            color: var(--accent-main);
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .msg {
-            display: flex;
-            gap: 1rem;
-            max-width: 85%;
-        }
-
-        .msg.user {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .msg-bubble {
-            padding: 1rem 1.25rem;
-            border-radius: 1.25rem;
-            font-size: 0.925rem;
-            line-height: 1.6;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-        }
-
-        .msg.user .msg-bubble {
-            background: var(--accent-main);
-            color: #000;
-            border: none;
-        }
-
-        /* INPUT AREA */
-        .chat-input-area {
-            padding: 1.5rem;
-            background: var(--bg-secondary);
-            border-top: 1px solid var(--border);
-        }
-
-        .chat-input-wrap {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            gap: 0.75rem;
-            background: var(--bg-tertiary);
-            padding: 0.5rem;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-        }
-
-        .chat-input {
-            flex: 1;
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            padding: 0.5rem 0.75rem;
-            font-family: var(--font-display);
-            font-size: 0.95rem;
-            outline: none;
-            resize: none;
-        }
-
-        /* BUTTONS */
-        .btn-primary {
-            background: var(--accent-main);
-            color: #000;
-            font-weight: 700;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--radius);
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
+        .btn-primary { background: var(--accent-main); color: #000; font-weight: 700; padding: 0.75rem 1.5rem; border-radius: var(--radius); border: none; cursor: pointer; transition: all 0.2s; }
         .btn-primary:hover { opacity: 0.9; transform: scale(1.02); }
         .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            .panel-left, .panel-right {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                z-index: 40;
-                box-shadow: 20px 0 50px rgba(0,0,0,0.5);
-            }
-            .panel-left { left: 0; transform: translateX(-100%); }
-            .panel-right { right: 0; transform: translateX(100%); }
-            
-            .panel-left.open, .panel-right.active { transform: translateX(0); }
-            
-            .mobile-toggle { display: block; }
-        }
+        .hidden { display: none !important; }
+        .loading-overlay { position: fixed; inset: 0; background: rgba(9,9,11,0.8); backdrop-filter: blur(4px); z-index: 300; display: flex; align-items: center; justify-content: center; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--accent-main); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        @media (max-width: 640px) {
-            .roles-grid, .niveles-grid { grid-template-columns: 1fr; }
-            .msg { max-width: 95%; }
-            .header { padding: 0 1rem; }
+        @media (max-width: 1024px) {
+            .panel-left, .panel-right { position: absolute; top: 0; bottom: 0; z-index: 40; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+            .panel-left { left: 0; transform: translateX(-100%); width: 280px; }
+            .panel-right { right: 0; transform: translateX(100%); width: 280px; }
+            .panel-left.open, .panel-right.active { transform: translateX(0); }
+            .mobile-toggle { display: block; }
         }
     </style>
 </head>
-
 <body>
-    <!-- SETUP SCREEN -->
     <div class="setup-screen" id="setupScreen">
         <div class="setup-container">
             <div class="setup-header">
@@ -400,55 +130,35 @@
                 <h1 class="setup-title">StakeFlow</h1>
                 <p class="setup-subtitle">Simulador profesional de elicitación de requerimientos</p>
             </div>
-
             <div class="setup-section">
-                <label class="panel-label">Configuración de API</label>
-                <div style="position:relative">
-                    <input type="password" class="chat-input" id="apiKeyInput" placeholder="sk-ant-api03-..." style="width:100%; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary)" />
-                </div>
+                <label class="panel-label">API Key de Anthropic</label>
+                <input type="password" class="chat-input" id="apiKeyInput" placeholder="sk-ant-api03-..." style="width:100%; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary)" />
             </div>
-
             <div class="setup-section">
-                <label class="panel-label">Selecciona un Caso de Estudio</label>
-                <div class="casos-grid" id="casosGrid">
-                    <!-- Dinámico -->
-                </div>
+                <label class="panel-label">Caso de Estudio</label>
+                <div class="casos-grid" id="casosGrid"></div>
             </div>
-
             <div class="setup-section">
-                <label class="panel-label">Nivel de Dificultad</label>
+                <label class="panel-label">Dificultad</label>
                 <div class="niveles-grid">
-                    <div class="card" onclick="selectNivel(1)" id="nivel-1">
-                        <div class="card-title">01. Cooperativo</div>
-                        <div class="card-desc">Respuestas directas y claras</div>
-                    </div>
-                    <div class="card" onclick="selectNivel(2)" id="nivel-2">
-                        <div class="card-title">02. Realista</div>
-                        <div class="card-desc">Resistencia y agendas ocultas</div>
-                    </div>
-                    <div class="card" onclick="selectNivel(3)" id="nivel-3">
-                        <div class="card-title">03. Adversarial</div>
-                        <div class="card-desc">Conflictos graves y evasivas</div>
-                    </div>
+                    <div class="card" onclick="selectNivel(1)" id="nivel-1"><div class="card-title">Cooperativo</div><div class="card-desc">Respuestas claras.</div></div>
+                    <div class="card" onclick="selectNivel(2)" id="nivel-2"><div class="card-title">Realista</div><div class="card-desc">Resistencia moderada.</div></div>
+                    <div class="card" onclick="selectNivel(3)" id="nivel-3"><div class="card-title">Adversarial</div><div class="card-desc">Conflictos y evasivas.</div></div>
                 </div>
             </div>
-
             <button class="btn-primary" style="width:100%" id="btnStart" onclick="startSession()" disabled>Comenzar Simulación</button>
         </div>
     </div>
 
-    <!-- MAIN APP -->
     <div class="header">
         <div class="header-logo">
             <div class="header-logo-icon"><i data-lucide="brain-circuit"></i></div>
             <span class="header-title">StakeFlow <span class="header-version">v3.0</span></span>
         </div>
-        <div class="header-right">
+        <div class="header-right" style="display:flex; align-items:center; gap:0.75rem">
             <button class="mobile-toggle" onclick="toggleSidebar('left')"><i data-lucide="menu"></i></button>
-            <div class="nivel-badge" id="nivelBadge" style="margin-left: 1rem">
-                <span id="nivelLabel" style="font-size:0.75rem; color:var(--accent-main); font-weight:700"></span>
-            </div>
-            <button class="mobile-toggle" onclick="toggleSidebar('right')" style="margin-left: 0.5rem"><i data-lucide="list-checks"></i></button>
+            <span id="nivelLabel" style="font-size:0.7rem; font-weight:800; color:var(--accent-main); font-family:var(--font-mono)"></span>
+            <button class="mobile-toggle" onclick="toggleSidebar('right')"><i data-lucide="list-checks"></i></button>
         </div>
     </div>
 
@@ -456,25 +166,23 @@
         <div class="panel-left" id="sidebarLeft">
             <div class="panel-section">
                 <label class="panel-label">Caso Activo</label>
-                <div id="currentCasoDisplay" style="display:flex; align-items:center; gap:0.75rem">
-                    <div class="chat-avatar" id="currentCasoIcon"></div>
+                <div style="display:flex; align-items:center; gap:0.75rem">
+                    <div class="chat-avatar" id="currentCasoIcon" style="width:32px; height:32px"></div>
                     <div>
-                        <div style="font-weight:700; font-size:0.875rem" id="currentCasoName"></div>
-                        <div style="font-size:0.75rem; color:var(--text-muted)" id="currentNivelName"></div>
+                        <div id="currentCasoName" style="font-weight:700; font-size:0.85rem"></div>
+                        <div id="currentNivelName" style="font-size:0.7rem; color:var(--text-muted)"></div>
                     </div>
                 </div>
             </div>
-
             <div class="panel-section">
                 <label class="panel-label">Stakeholders</label>
                 <div id="rolesList" style="display:grid; gap:0.5rem"></div>
             </div>
-
-            <div class="panel-section" style="margin-top:auto">
+            <div class="panel-section" style="margin-top:auto; border-bottom:none">
                 <div style="display:grid; gap:0.5rem">
-                    <button class="card" style="padding:0.75rem" onclick="generateIEEE()"><i data-lucide="file-text" style="vertical-align:middle; margin-right:0.5rem"></i> Documento IEEE</button>
-                    <button class="card" style="padding:0.75rem" onclick="evaluateSession()"><i data-lucide="bar-chart-3" style="vertical-align:middle; margin-right:0.5rem"></i> Evaluación</button>
-                    <button class="card" style="padding:0.75rem" onclick="resetSession()"><i data-lucide="refresh-cw" style="vertical-align:middle; margin-right:0.5rem"></i> Reiniciar</button>
+                    <button class="card" style="padding:0.75rem; text-align:left" onclick="generateIEEE()"><i data-lucide="file-text" style="vertical-align:middle; margin-right:0.5rem"></i> IEEE 830</button>
+                    <button class="card" style="padding:0.75rem; text-align:left" onclick="evaluateSession()"><i data-lucide="bar-chart-3" style="vertical-align:middle; margin-right:0.5rem"></i> Evaluación</button>
+                    <button class="card" style="padding:0.75rem; text-align:left" onclick="resetSession()"><i data-lucide="refresh-cw" style="vertical-align:middle; margin-right:0.5rem"></i> Reiniciar</button>
                 </div>
             </div>
         </div>
@@ -484,15 +192,13 @@
                 <div class="chat-avatar" id="chatAvatar"></div>
                 <div>
                     <div class="chat-persona-name" id="chatPersonaName"></div>
-                    <div style="font-size:0.75rem; color:var(--text-muted)" id="chatPersonaRole"></div>
+                    <div id="chatPersonaRole" style="font-size:0.75rem; color:var(--text-muted)"></div>
                 </div>
             </div>
-
             <div class="chat-messages" id="chatMessages"></div>
-
             <div class="chat-input-area">
                 <div class="chat-input-wrap">
-                    <textarea class="chat-input" id="chatInput" placeholder="Pregunta algo al stakeholder..." rows="1" onkeydown="handleInputKey(event)"></textarea>
+                    <textarea class="chat-input" id="chatInput" placeholder="Pregunta algo..." rows="1" onkeydown="handleInputKey(event)"></textarea>
                     <button class="btn-primary" style="padding:0.5rem 1rem" id="btnSend" onclick="sendMessage()"><i data-lucide="send"></i></button>
                 </div>
             </div>
@@ -500,1007 +206,94 @@
 
         <div class="panel-right" id="sidebarRight">
             <div class="panel-section">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem">
-                    <label class="panel-label" style="margin-bottom:0">Requerimientos</label>
-                    <span style="background:var(--accent-main); color:#000; font-size:0.7rem; font-weight:800; padding:0.1rem 0.4rem; border-radius:1rem" id="reqsCount">0</span>
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <label class="panel-label" style="margin-bottom:0">Requisitos</label>
+                    <span id="reqsCount" style="background:var(--accent-main); color:#000; font-size:0.7rem; font-weight:800; padding:2px 6px; border-radius:10px">0</span>
                 </div>
-                <button class="btn-primary" style="width:100%; font-size:0.8rem" onclick="openAddReqModal()">+ Capturar Manual</button>
             </div>
             <div id="reqsList" style="flex:1; overflow-y:auto; padding:1rem; display:grid; gap:0.75rem"></div>
         </div>
     </div>
-        }
 
-        .reqs-title {
-            font-family: var(--font-display);
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .reqs-count {
-            font-size: 10px;
-            padding: 1px 6px;
-            background: rgba(0, 229, 255, 0.1);
-            border: 1px solid rgba(0, 229, 255, 0.2);
-            border-radius: 20px;
-            color: var(--accent-cyan);
-        }
-
-        .btn-add-req {
-            padding: 5px 10px;
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            border-radius: var(--radius);
-            color: var(--accent-green);
-            font-family: var(--font-mono);
-            font-size: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: 600;
-        }
-
-        .btn-add-req:hover {
-            background: rgba(0, 255, 136, 0.2);
-        }
-
-        .reqs-tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-        }
-
-        .req-tab {
-            flex: 1;
-            padding: 7px;
-            font-size: 10px;
-            font-weight: 600;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text-muted);
-            font-family: var(--font-mono);
-            transition: all 0.2s;
-            border-bottom: 2px solid transparent;
-        }
-
-        .req-tab.active {
-            color: var(--accent-cyan);
-            border-bottom-color: var(--accent-cyan);
-        }
-
-        .req-tab:hover:not(.active) {
-            color: var(--text-secondary);
-        }
-
-        .reqs-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .req-item {
-            padding: 9px 10px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            transition: all 0.2s;
-            position: relative;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .req-item:hover {
-            border-color: var(--border-glow);
-            background: var(--bg-hover);
-        }
-
-        .req-item-header {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 5px;
-        }
-
-        .req-id {
-            font-size: 9px;
-            font-weight: 700;
-            padding: 1px 5px;
-            border-radius: 3px;
-            font-family: var(--font-mono);
-        }
-
-        .req-id.rf {
-            background: rgba(0, 229, 255, 0.15);
-            color: var(--accent-cyan);
-        }
-
-        .req-id.rnf {
-            background: rgba(124, 58, 237, 0.15);
-            color: #a78bfa;
-        }
-
-        .req-priority {
-            font-size: 9px;
-            padding: 1px 5px;
-            border-radius: 3px;
-            margin-left: auto;
-        }
-
-        .req-priority.alta {
-            background: rgba(255, 107, 53, 0.15);
-            color: var(--accent-orange);
-        }
-
-        .req-priority.media {
-            background: rgba(255, 214, 10, 0.15);
-            color: var(--accent-yellow);
-        }
-
-        .req-priority.baja {
-            background: rgba(0, 255, 136, 0.15);
-            color: var(--accent-green);
-        }
-
-        .req-desc {
-            font-size: 11px;
-            color: var(--text-primary);
-            line-height: 1.4;
-            margin-bottom: 5px;
-        }
-
-        .req-meta {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .req-source {
-            font-size: 9px;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-
-        .req-delete {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 11px;
-            padding: 2px 4px;
-            border-radius: 3px;
-            transition: all 0.2s;
-        }
-
-        .req-delete:hover {
-            color: var(--accent-orange);
-            background: rgba(255, 107, 53, 0.1);
-        }
-
-        .reqs-empty {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 11px;
-            text-align: center;
-            padding: 20px;
-            gap: 8px;
-        }
-
-        .reqs-empty-icon {
-            font-size: 28px;
-            opacity: 0.4;
-        }
-
-        /* MODAL */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            padding: 20px;
-            animation: fadeIn 0.2s ease;
-        }
-
-        .modal {
-            width: 100%;
-            max-width: 500px;
-            max-height: 80vh;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-header {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .modal-title {
-            font-family: var(--font-display);
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 18px;
-            cursor: pointer;
-            transition: color 0.2s;
-            line-height: 1;
-        }
-
-        .modal-close:hover {
-            color: var(--text-primary);
-        }
-
-        .modal-body {
-            padding: 16px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .modal-footer {
-            padding: 12px 16px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 8px;
-            justify-content: flex-end;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        .form-label {
-            display: block;
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--accent-cyan);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
-            width: 100%;
-            padding: 9px 12px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text-primary);
-            font-family: var(--font-mono);
-            font-size: 12px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
-            border-color: var(--accent-cyan);
-        }
-
-        .form-select option {
-            background: var(--bg-card);
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 70px;
-            line-height: 1.5;
-        }
-
-        .btn-primary {
-            padding: 8px 16px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-            border: none;
-            border-radius: var(--radius);
-            color: #000;
-            font-family: var(--font-display);
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-cyan);
-        }
-
-        .btn-secondary {
-            padding: 8px 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--text-secondary);
-            color: var(--text-primary);
-        }
-
-        /* IEEE 830 OUTPUT */
-        .ieee-output {
-            font-family: var(--font-mono);
-            font-size: 11px;
-            line-height: 1.7;
-            color: var(--text-primary);
-            white-space: pre-wrap;
-            background: var(--bg-card);
-            padding: 14px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        /* EVALUACION */
-        .eval-score {
-            text-align: center;
-            padding: 20px;
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            margin-bottom: 14px;
-        }
-
-        .eval-score-num {
-            font-family: var(--font-display);
-            font-size: 48px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .eval-score-label {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .eval-bars {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 14px;
-        }
-
-        .eval-bar-item {}
-
-        .eval-bar-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        .eval-bar-track {
-            height: 4px;
-            background: var(--bg-card);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .eval-bar-fill {
-            height: 100%;
-            border-radius: 2px;
-            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
-            transition: width 0.8s ease;
-        }
-
-        .eval-feedback {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 12px;
-            font-size: 11px;
-            line-height: 1.6;
-            color: var(--text-secondary);
-            white-space: pre-wrap;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .loading-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(8, 12, 16, 0.9);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 300;
-            gap: 12px;
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--border);
-            border-top-color: var(--accent-cyan);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .loading-text {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* WELCOME MSG */
-        .welcome-msg {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--text-muted);
-            font-size: 12px;
-            text-align: center;
-            gap: 8px;
-            padding: 40px;
-        }
-
-        .welcome-icon {
-            font-size: 40px;
-            margin-bottom: 8px;
-        }
-
-        .welcome-title {
-            font-family: var(--font-display);
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-secondary);
-        }
-    </style>
-</head>
-
-<body>
-
-    <!-- SETUP SCREEN -->
-    <div class="setup-screen" id="setupScreen">
-        <div class="setup-container">
-            <div class="setup-header">
-                <div class="setup-icon">🎭</div>
-                <div class="setup-title">StakeFlow</div>
-                <div class="setup-subtitle"
-                    style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:4px">— Simulador de
-                    Stakeholders —</div>
-                <div class="setup-subtitle">Simulador profesional de entrevistas de requerimientos.<br>Ingresa tu API
-                    Key para comenzar.</div>
-            </div>
-
-            <div class="setup-section">
-                <div class="setup-section-label">API Key de Anthropic</div>
-                <div class="api-input-wrap">
-                    <input type="password" class="api-input" id="apiKeyInput" placeholder="sk-ant-api03-..." />
-                    <button class="api-toggle" id="apiToggle" onclick="toggleApiVisibility()">👁</button>
-                </div>
-                <div class="api-note">🔒 Tu key se guarda solo en tu navegador — nunca se envía a servidores externos
-                </div>
-            </div>
-
-            <div class="setup-section">
-                <div class="setup-section-label">Selecciona un Caso</div>
-                <div class="casos-grid">
-                    <div class="caso-card" onclick="selectCaso(1)" id="caso-1">
-                        <span class="caso-emoji">🏥</span>
-                        <div class="caso-name">Clínica Médica</div>
-                        <div class="caso-desc">Sistema de gestión para clínica con 12 años en papel</div>
-                    </div>
-                    <div class="caso-card" onclick="selectCaso(2)" id="caso-2">
-                        <span class="caso-emoji">🍽️</span>
-                        <div class="caso-name">Restaurante</div>
-                        <div class="caso-desc">Cadena de 3 sucursales sin sistema POS adecuado</div>
-                    </div>
-                    <div class="caso-card" onclick="selectCaso(3)" id="caso-3">
-                        <span class="caso-emoji">🎓</span>
-                        <div class="caso-name">Universidad</div>
-                        <div class="caso-desc">Plataforma académica para 8,000 alumnos</div>
-                    </div>
-                    <div class="caso-card" onclick="selectCaso(4)" id="caso-4">
-                        <span class="caso-emoji">💪</span>
-                        <div class="caso-name">Gimnasio</div>
-                        <div class="caso-desc">Centro de bienestar con fraudes y accesos no controlados</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="setup-section">
-                <div class="setup-section-label">Rol Inicial</div>
-                <div class="roles-grid">
-                    <div class="role-card" onclick="selectRol('sponsor')" id="rol-sponsor">
-                        <span class="role-emoji">💼</span>
-                        <div class="role-name">Sponsor</div>
-                        <div class="role-desc">Dueño / Inversionista</div>
-                    </div>
-                    <div class="role-card" onclick="selectRol('cliente')" id="rol-cliente">
-                        <span class="role-emoji">📊</span>
-                        <div class="role-name">Cliente</div>
-                        <div class="role-desc">Director / Gerente</div>
-                    </div>
-                    <div class="role-card" onclick="selectRol('usuario')" id="rol-usuario">
-                        <span class="role-emoji">👤</span>
-                        <div class="role-name">Usuario Final</div>
-                        <div class="role-desc">Operativo / Empleado</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="setup-section">
-                <div class="setup-section-label">Nivel de Dificultad</div>
-                <div class="niveles-grid">
-                    <div class="nivel-card" onclick="selectNivel(1)" id="nivel-1">
-                        <div class="nivel-num nivel-num-1">01</div>
-                        <div class="nivel-label">Cooperativo</div>
-                        <div class="nivel-desc">Respuestas claras, sin agenda oculta</div>
-                    </div>
-                    <div class="nivel-card" onclick="selectNivel(2)" id="nivel-2">
-                        <div class="nivel-num nivel-num-2">02</div>
-                        <div class="nivel-label">Realista</div>
-                        <div class="nivel-desc">Agenda propia, omisiones, resistencia</div>
-                    </div>
-                    <div class="nivel-card" onclick="selectNivel(3)" id="nivel-3">
-                        <div class="nivel-num nivel-num-3">03</div>
-                        <div class="nivel-label">Adversarial</div>
-                        <div class="nivel-desc">Contradicciones, conflictos, secretos</div>
-                    </div>
-                </div>
-            </div>
-
-            <button class="btn-start" id="btnStart" onclick="startSession()" disabled>
-                Iniciar Sesión de Entrevista →
-            </button>
-        </div>
-    </div>
-
-    <!-- MAIN APP -->
-    <div class="header">
-        <div class="header-logo">
-            <div class="header-logo-icon">🎭</div>
-            <span class="header-title">StakeFlow</span>
-            <span class="header-version">v3.0</span>
-        </div>
-        <div class="header-right">
-            <div class="nivel-badge" id="nivelBadge">
-                <div class="nivel-dot" id="nd1"></div>
-                <div class="nivel-dot" id="nd2"></div>
-                <div class="nivel-dot" id="nd3"></div>
-                <span id="nivelLabel" style="font-size:10px;color:var(--text-muted)">—</span>
+    <!-- MODALS -->
+    <div id="addReqModal" class="setup-screen hidden" style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
+        <div class="setup-container" style="max-width:480px">
+            <h2 class="card-title" style="font-size:1.25rem; margin-bottom:1.5rem">Capturar Requisito</h2>
+            <textarea id="reqDesc" class="chat-input" style="width:100%; height:120px; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary); margin-bottom:1rem" placeholder="Descripción..."></textarea>
+            <div style="display:flex; gap:0.75rem">
+                <button class="card" style="flex:1" onclick="closeModal('addReqModal')">Cancelar</button>
+                <button class="btn-primary" style="flex:1" onclick="saveReq()">Guardar</button>
             </div>
         </div>
     </div>
-
-    <div class="main">
-        <!-- LEFT PANEL -->
-        <div class="panel-left">
-            <div class="panel-section">
-                <div class="panel-label">Caso Activo</div>
-                <div class="current-caso" id="currentCasoCard">
-                    <span class="current-caso-emoji" id="currentCasoEmoji">—</span>
-                    <div class="current-caso-name" id="currentCasoName">Sin caso seleccionado</div>
-                    <span class="current-nivel nivel-1" id="currentNivelBadge">—</span>
-                </div>
-            </div>
-
-            <div class="panel-section">
-                <div class="panel-label">Cambiar Rol</div>
-                <div class="roles-list" id="rolesList"></div>
-            </div>
-
-            <div class="panel-section">
-                <div class="panel-label">Comandos</div>
-                <div class="cmd-list">
-                    <button class="cmd-item" onclick="generateIEEE()">
-                        <span class="cmd-icon">📄</span>
-                        <span class="cmd-text">Generar IEEE 830</span>
-                    </button>
-                    <button class="cmd-item" onclick="evaluateSession()">
-                        <span class="cmd-icon">📊</span>
-                        <span class="cmd-text">Evaluar Sesión</span>
-                    </button>
-                    <button class="cmd-item" onclick="resetSession()">
-                        <span class="cmd-icon">🔄</span>
-                        <span class="cmd-text">Nueva Sesión</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="session-stats">
-                <div class="stat-card">
-                    <div class="stat-num" id="statMsgs">0</div>
-                    <div class="stat-label">Preguntas</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-num" id="statReqs">0</div>
-                    <div class="stat-label">Reqs.</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-num" id="statRoles">1</div>
-                    <div class="stat-label">Roles</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-num" id="statRF">0</div>
-                    <div class="stat-label">RF</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CENTER CHAT -->
-        <div class="panel-center">
-            <div class="chat-header" id="chatHeader">
-                <div class="chat-avatar" id="chatAvatar">🎭</div>
-                <div class="chat-persona-info">
-                    <div class="chat-persona-name" id="chatPersonaName">Selecciona un personaje</div>
-                    <div class="chat-persona-role" id="chatPersonaRole">—</div>
-                </div>
-                <div class="chat-status" id="chatStatus">
-                    <div class="status-dot"></div>
-                    <span>En sesión</span>
-                </div>
-            </div>
-
-            <div class="chat-messages" id="chatMessages">
-                <div class="welcome-msg" id="welcomeMsg">
-                    <div class="welcome-icon">🎭</div>
-                    <div class="welcome-title">Sesión en curso</div>
-                    <div>Haz tu primera pregunta al stakeholder.<br>Captura requerimientos con el botón <strong
-                            style="color:var(--accent-green)">+ REQ</strong> en cada respuesta.</div>
-                </div>
-            </div>
-
-            <div class="chat-input-area">
-                <div class="chat-input-wrap">
-                    <textarea class="chat-input" id="chatInput" placeholder="Escribe tu pregunta al stakeholder..."
-                        rows="1" onkeydown="handleInputKey(event)" oninput="autoResize(this)"></textarea>
-                    <button class="btn-send" id="btnSend" onclick="sendMessage()">➤</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- RIGHT PANEL -->
-        <div class="panel-right">
-            <div class="reqs-header">
-                <div class="reqs-title">
-                    📋 Requerimientos
-                    <span class="reqs-count" id="reqsCount">0</span>
-                </div>
-                <button class="btn-add-req" onclick="openAddReqModal()">+ Agregar</button>
-            </div>
-            <div class="reqs-tabs">
-                <button class="req-tab active" id="tabAll" onclick="filterReqs('all')">Todos</button>
-                <button class="req-tab" id="tabRF" onclick="filterReqs('RF')">Funcionales</button>
-                <button class="req-tab" id="tabRNF" onclick="filterReqs('RNF')">No Func.</button>
-            </div>
-            <div class="reqs-list" id="reqsList">
-                <div class="reqs-empty" id="reqsEmpty">
-                    <div class="reqs-empty-icon">📝</div>
-                    <div>Sin requerimientos aún</div>
-                    <div style="font-size:10px;margin-top:4px">Captura desde las respuestas<br>o usa el botón + Agregar
-                    </div>
-                </div>
+    <div id="ieeeModal" class="setup-screen hidden" style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
+        <div class="setup-container" style="max-width:800px; height:85vh; display:flex; flex-direction:column">
+            <h2 class="card-title">Documento IEEE 830</h2>
+            <div id="ieeeOutput" style="flex:1; background:var(--bg-tertiary); padding:1.5rem; border-radius:var(--radius); overflow-y:auto; font-family:var(--font-mono); font-size:0.85rem; border:1px solid var(--border); white-space:pre-wrap; margin-top:1rem"></div>
+            <div style="display:flex; gap:0.75rem; margin-top:1.5rem">
+                <button class="card" style="flex:1" onclick="closeModal('ieeeModal')">Cerrar</button>
+                <button class="btn-primary" style="flex:1" onclick="copyText('ieeeOutput')">Copiar</button>
             </div>
         </div>
     </div>
-
-    <!-- MODAL AGREGAR REQ -->
-    <div class="modal-overlay hidden" id="addReqModal">
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">📋 Capturar Requerimiento</div>
-                <button class="modal-close" onclick="closeModal('addReqModal')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Tipo</label>
-                    <select class="form-select" id="reqTipo">
-                        <option value="RF">RF — Funcional</option>
-                        <option value="RNF">RNF — No Funcional</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Descripción</label>
-                    <textarea class="form-textarea" id="reqDesc"
-                        placeholder="Describe el requerimiento capturado..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Prioridad</label>
-                    <select class="form-select" id="reqPrioridad">
-                        <option value="Alta">Alta</option>
-                        <option value="Media">Media</option>
-                        <option value="Baja">Baja</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Fuente (Stakeholder)</label>
-                    <input class="form-input" id="reqFuente" placeholder="Ej: Carlos (Recepcionista)" />
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal('addReqModal')">Cancelar</button>
-                <button class="btn-primary" onclick="saveReq()">Guardar Requerimiento</button>
-            </div>
+    <div id="evalModal" class="setup-screen hidden" style="background:rgba(0,0,0,0.8); backdrop-filter:blur(8px); z-index:200">
+        <div class="setup-container" style="max-width:560px">
+            <h2 class="card-title">Evaluación</h2>
+            <div id="evalContent" style="background:var(--bg-tertiary); padding:1.5rem; border-radius:var(--radius); border:1px solid var(--border); font-size:0.9rem; margin-top:1rem"></div>
+            <button class="card" style="width:100%; margin-top:1.5rem" onclick="closeModal('evalModal')">Cerrar</button>
         </div>
     </div>
 
-    <!-- MODAL IEEE 830 -->
-    <div class="modal-overlay hidden" id="ieeeModal">
-        <div class="modal" style="max-width:640px">
-            <div class="modal-header">
-                <div class="modal-title">📄 Documento IEEE 830</div>
-                <button class="modal-close" onclick="closeModal('ieeeModal')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="ieee-output" id="ieeeOutput">Generando documento...</div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal('ieeeModal')">Cerrar</button>
-                <button class="btn-primary" onclick="copyIEEE()">📋 Copiar</button>
-                <button class="btn-primary" onclick="printIEEE()">🖨️ Imprimir / PDF</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL EVALUACION -->
-    <div class="modal-overlay hidden" id="evalModal">
-        <div class="modal" style="max-width:520px">
-            <div class="modal-header">
-                <div class="modal-title">📊 Evaluación de Sesión</div>
-                <button class="modal-close" onclick="closeModal('evalModal')">×</button>
-            </div>
-            <div class="modal-body">
-                <div class="eval-score">
-                    <div class="eval-score-num" id="evalScoreNum">—</div>
-                    <div class="eval-score-label">Puntaje General / 100</div>
-                </div>
-                <div class="eval-bars" id="evalBars"></div>
-                <div class="eval-feedback" id="evalFeedback">Analizando sesión...</div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeModal('evalModal')">Cerrar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- LOADING -->
-    <div class="loading-overlay hidden" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-        <div class="loading-text" id="loadingText">Procesando...</div>
-    </div>
+    <div class="loading-overlay hidden" id="loadingOverlay"><div class="spinner"></div></div>
 
     <script>
-        // ─── STATE ───────────────────────────────────────────────────────────────────
-        let state = {
-            apiKey: '',
-            caso: null,
-            rol: null,
-            nivel: null,
-            messages: [],
-            requirements: [],
-            reqCounter: { RF: 0, RNF: 0 },
-            rolesVisited: new Set(),
-            userMsgCount: 0,
-            pendingCapture: null
-        };
-
-        // ─── CASOS DATA (Lucide Icons) ───────────────────────────────────────────────
+        let state = { apiKey: '', caso: null, rol: 'sponsor', nivel: null, messages: [], requirements: [], rolesVisited: new Set(), userMsgCount: 0, pendingCapture: null };
         const CASOS = {
-            1: {
-                icon: 'hospital', name: 'Clínica Médica',
-                roles: {
-                    sponsor: { icon: 'user-cog', name: 'Dr. Roberto', title: 'Médico y Dueño' },
-                    cliente: { icon: 'briefcase', name: 'Laura', title: 'Directora Administrativa' },
-                    usuario: { icon: 'users', name: 'Carlos', title: 'Recepcionista' }
-                }
-            },
-            2: {
-                icon: 'utensils', name: 'Restaurante',
-                roles: {
-                    sponsor: { icon: 'circle-dollar-sign', name: 'Martín', title: 'Socio Capitalista' },
-                    cliente: { icon: 'chef-hat', name: 'Sofía', title: 'Gerente de Sucursal' },
-                    usuario: { icon: 'calculator', name: 'Diego', title: 'Cajero' }
-                }
-            },
-            3: {
-                icon: 'graduation-cap', name: 'Universidad',
-                roles: {
-                    sponsor: { icon: 'landmark', name: 'Dra. Elena', title: 'Rectora' },
-                    cliente: { icon: 'book-open', name: 'Ing. Gómez', title: 'Jefe de Gestión Académica' },
-                    usuario: { icon: 'user', name: 'Ana', title: 'Alumna' }
-                }
-            },
-            4: {
-                icon: 'dumbbell', name: 'Gimnasio',
-                roles: {
-                    sponsor: { icon: 'trending-up', name: 'Sr. Alejandro', title: 'Inversionista' },
-                    cliente: { icon: 'user-square', name: 'Valeria', title: 'Gerente General' },
-                    usuario: { icon: 'clipboard-list', name: 'Lucas', title: 'Recepcionista' }
-                }
-            }
+            1: { icon: 'hospital', name: 'Clínica Médica', roles: { sponsor: { icon: 'user-cog', name: 'Dr. Roberto', title: 'Médico y Dueño' }, cliente: { icon: 'briefcase', name: 'Laura', title: 'Directora Administrativa' }, usuario: { icon: 'users', name: 'Carlos', title: 'Recepcionista' } } },
+            2: { icon: 'utensils', name: 'Restaurante', roles: { sponsor: { icon: 'circle-dollar-sign', name: 'Martín', title: 'Socio' }, cliente: { icon: 'chef-hat', name: 'Sofía', title: 'Gerente' }, usuario: { icon: 'calculator', name: 'Diego', title: 'Cajero' } } },
+            3: { icon: 'graduation-cap', name: 'Universidad', roles: { sponsor: { icon: 'landmark', name: 'Dra. Elena', title: 'Rectora' }, cliente: { icon: 'book-open', name: 'Ing. Gómez', title: 'Jefe Académico' }, usuario: { icon: 'user', name: 'Ana', title: 'Alumna' } } },
+            4: { icon: 'dumbbell', name: 'Gimnasio', roles: { sponsor: { icon: 'trending-up', name: 'Sr. Alejandro', title: 'Inversionista' }, cliente: { icon: 'user-square', name: 'Valeria', title: 'Gerente' }, usuario: { icon: 'clipboard-list', name: 'Lucas', title: 'Recepcionista' } } }
         };
-
         const NIVEL_NAMES = { 1: 'Cooperativo', 2: 'Realista', 3: 'Adversarial' };
 
-        // ─── INIT ─────────────────────────────────────────────────────────────────────
         window.addEventListener('DOMContentLoaded', () => {
             renderCasosGrid();
             const savedKey = localStorage.getItem('sk_sim');
-            if (savedKey) {
-                try { document.getElementById('apiKeyInput').value = atob(savedKey); } catch (e) {}
-            }
+            if (savedKey) try { document.getElementById('apiKeyInput').value = atob(savedKey); } catch (e) {}
             lucide.createIcons();
         });
 
         function renderCasosGrid() {
-            const grid = document.getElementById('casosGrid');
-            grid.innerHTML = Object.entries(CASOS).map(([id, c]) => `
+            document.getElementById('casosGrid').innerHTML = Object.entries(CASOS).map(([id, c]) => `
                 <div class="card" onclick="selectCaso(${id})" id="caso-${id}">
-                    <div class="card-icon" style="margin-bottom:0.75rem"><i data-lucide="${c.icon}"></i></div>
+                    <div class="card-icon"><i data-lucide="${c.icon}"></i></div>
                     <div class="card-title">${c.name}</div>
-                    <div class="card-desc">Simulación enfocada en ${c.name.toLowerCase()}.</div>
+                    <div class="card-desc">Simulación de elicitación técnica.</div>
                 </div>
             `).join('');
             lucide.createIcons();
         }
 
-        function selectCaso(n) {
-            state.caso = n;
-            document.querySelectorAll('#casosGrid .card').forEach(c => c.classList.remove('selected'));
-            document.getElementById(`caso-${n}`).classList.add('selected');
-            checkSetupReady();
-        }
-
-        function selectNivel(n) {
-            state.nivel = n;
-            document.querySelectorAll('.niveles-grid .card').forEach(c => c.classList.remove('selected'));
-            document.getElementById(`nivel-${n}`).classList.add('selected');
-            checkSetupReady();
-        }
-
-        function checkSetupReady() {
-            const key = document.getElementById('apiKeyInput').value.trim();
-            const ready = state.caso && state.nivel && key.length > 10;
-            document.getElementById('btnStart').disabled = !ready;
-        }
+        function selectCaso(n) { state.caso = n; document.querySelectorAll('#casosGrid .card').forEach(c => c.classList.remove('selected')); document.getElementById(`caso-${n}`).classList.add('selected'); checkSetupReady(); }
+        function selectNivel(n) { state.nivel = n; document.querySelectorAll('.niveles-grid .card').forEach(c => c.classList.remove('selected')); document.getElementById(`nivel-${n}`).classList.add('selected'); checkSetupReady(); }
+        function checkSetupReady() { const key = document.getElementById('apiKeyInput').value.trim(); document.getElementById('btnStart').disabled = !(state.caso && state.nivel && key.length > 10); }
 
         async function startSession() {
             state.apiKey = document.getElementById('apiKeyInput').value.trim();
             localStorage.setItem('sk_sim', btoa(state.apiKey));
-            if (!state.rol) state.rol = 'sponsor';
             state.rolesVisited.add(state.rol);
             document.getElementById('setupScreen').classList.add('hidden');
             updateUI();
-            showLoading('Iniciando entorno...');
+            showLoading();
             await initPersonaje();
             hideLoading();
         }
 
-        function toggleSidebar(side) {
-            if (side === 'left') document.getElementById('sidebarLeft').classList.toggle('open');
-            else document.getElementById('sidebarRight').classList.toggle('active');
-        }
-
-        // ─── PROMPT SYSTEM ────────────────────────────────────────────────────────────
-        function buildSystemPrompt() {
-            const caso = CASOS[state.caso];
-            const nivelName = NIVEL_NAMES[state.nivel];
-            const PERFILES = {
-                1: {
-                    sponsor: `Eres el Dr. Roberto, médico dueño de una clínica privada. Llevas 12 años operando con papel y Excel. Aprobaste este proyecto después de recibir una multa regulatoria — no por visión, sino por miedo a otra sanción. Tus prioridades son: presupuesto cerrado, cero riesgos legales, reputación de la clínica. Preguntas el costo de cada funcionalidad antes de aprobar. Frase característica: "¿Y eso cuánto nos va a costar adicional?"`,
-                    cliente: `Eres Laura, Directora Administrativa de una clínica. Llevas años pidiendo un sistema sin que nadie te escuche. Ahora que el Dr. Roberto aprobó el proyecto, estás entusiasmada. Tus prioridades: reportes gerenciales, control de inventario de medicamentos, métricas de flujo de pacientes.`,
-                    usuario: `Eres Carlos, recepcionista de una clínica. Has visto llegar y fracasar DOS sistemas anteriores. Estás cansado y escéptico. Tus prioridades: registro rápido en horas pico, interfaz sin complicaciones, que no te agreguen pasos.`,
-                },
-                2: {
-                    sponsor: `Eres Martín, socio capitalista de una cadena de restaurantes. Pusiste el dinero pero no conoces la operación diaria. Quieres ROI en menos de 8 meses. Desconfías de tecnología cara.`,
-                    cliente: `Eres Sofía, gerente de sucursal de un restaurante. Coordinas todo con WhatsApp y Excel. Tus prioridades: gestión de mesas, supervisión de meseros, cuadre de caja preciso.`,
-                    usuario: `Eres Diego, cajero de restaurante. El sistema anterior se colgaba en viernes por la noche y te culpaban a ti. Tus prioridades: interfaz táctil ágil, cancelaciones simples, estabilidad.`,
-                },
-                3: {
-                    sponsor: `Eres la Dra. Elena, Rectora de una universidad privada de 8,000 alumnos. El consejo directivo te presiona para modernizar. Tus prioridades: imagen institucional, seguridad de calificaciones, escalabilidad.`,
-                    cliente: `Eres el Ing. Gómez, Jefe de Gestión Académica. Tú configuraste parcialmente el sistema actual de 15 años y tienes apego emocional. Tus prioridades: migración sin pérdida de datos históricos, auditorías, asignación masiva de materias.`,
-                    usuario: `Eres Ana, alumna universitaria. Has perdido materias por errores técnicos del sistema actual. Comparas todo con apps comerciales. Tus prioridades: app móvil, claridad en horarios/calificaciones, estabilidad en inscripciones.`,
-                },
-                4: {
-                    sponsor: `Eres el Sr. Alejandro, inversionista de un gimnasio. Calculaste que pierdes ~18% de ingresos por fraudes y morosidad. Tus prioridades: eliminar fraudes, reducir costos de personal, automatización.`,
-                    cliente: `Eres Valeria, Gerente General del gimnasio. Tienes datos dispersos en 3 sistemas que no se hablan. Tus prioridades: control de membresías, métricas de retención, gestión de horarios.`,
-                    usuario: `Eres Lucas, recepcionista de gimnasio. Las mañanas son caóticas: 40 check-ins en 15 minutos a las 6am.`,
-                }
-            };
-            const nivelInstruccion = {
-                1: 'Eres cooperativo. Responde con claridad.',
-                2: 'Tienes agenda propia. Omite detalles obvios.',
-                3: 'Puedes contradecirte levemente. Minimiza problemas graves.'
-            }[state.nivel];
-
-            return `${PERFILES[state.caso][state.rol]} NIVEL: ${nivelName}. ${nivelInstruccion} Reglas: No rompas el personaje. Responde SOLO lo preguntado. Si algo no es tu área, di "No lo sé, pregúntale a [nombre]".`;
-        }
-
-        // ─── API CALL ─────────────────────────────────────────────────────────────────
-        async function callClaude(userMsg, systemOverride = null) {
-            const system = systemOverride || buildSystemPrompt();
-            const apiMessages = state.messages.map(m => ({ role: m.role, content: m.content }));
-            if (userMsg) apiMessages.push({ role: 'user', content: userMsg });
-
-            const res = await fetch('https://api.anthropic.com/v1/messages', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': state.apiKey,
-                    'anthropic-version': '2023-06-01',
-                    'anthropic-dangerous-direct-browser-access': 'true'
-                },
-                body: JSON.stringify({
-                    model: 'claude-3-5-sonnet-20241022',
-                    max_tokens: 1000,
-                    system,
-                    messages: apiMessages
-                })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error?.message || 'Error de API');
-            return data.content[0].text;
-        }
-
-        async function initPersonaje() {
-            const initMsg = `Inicia la sesión. Preséntate brevemente y espera mi pregunta.`;
-            try {
-                const reply = await callClaude(initMsg);
-                state.messages.push({ role: 'user', content: initMsg });
-                state.messages.push({ role: 'assistant', content: reply });
-                addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]);
-            } catch (e) { addMessage('assistant', `Error de conexión: ${e.message}`, null); }
-        }
-
-        // ─── UI CORE ──────────────────────────────────────────────────────────────────
         function updateUI() {
             const caso = CASOS[state.caso];
-            document.getElementById('nivelLabel').textContent = `NIVEL ${state.nivel}: ${NIVEL_NAMES[state.nivel].toUpperCase()}`;
+            document.getElementById('nivelLabel').textContent = `N${state.nivel}: ${NIVEL_NAMES[state.nivel].toUpperCase()}`;
             document.getElementById('currentCasoName').textContent = caso.name;
-            document.getElementById('currentNivelName').textContent = `Dificultad: ${NIVEL_NAMES[state.nivel]}`;
+            document.getElementById('currentNivelName').textContent = NIVEL_NAMES[state.nivel];
             document.getElementById('currentCasoIcon').innerHTML = `<i data-lucide="${caso.icon}"></i>`;
             updateRolesList();
             updateChatHeader();
@@ -1509,58 +302,44 @@
         }
 
         function updateRolesList() {
-            const list = document.getElementById('rolesList');
-            list.innerHTML = Object.entries(CASOS[state.caso].roles).map(([key, r]) => `
-                <button class="card ${key === state.rol ? 'selected' : ''}" style="padding:0.75rem; text-align:left; display:flex; align-items:center; gap:0.75rem" onclick="switchRol('${key}')">
+            document.getElementById('rolesList').innerHTML = Object.entries(CASOS[state.caso].roles).map(([key, r]) => `
+                <button class="card ${key === state.rol ? 'selected' : ''}" style="padding:0.75rem; text-align:left; display:flex; align-items:center; gap:0.75rem; width:100%" onclick="switchRol('${key}')">
                     <i data-lucide="${r.icon}" style="width:16px"></i>
-                    <div style="flex:1">
-                        <div style="font-weight:700; font-size:0.8rem">${r.name}</div>
-                        <div style="font-size:0.7rem; opacity:0.6">${r.title}</div>
-                    </div>
+                    <div><div style="font-weight:700; font-size:0.8rem">${r.name}</div><div style="font-size:0.7rem; opacity:0.6">${r.title}</div></div>
                 </button>
             `).join('');
             lucide.createIcons();
         }
 
         function updateChatHeader() {
-            const rolData = CASOS[state.caso].roles[state.rol];
-            document.getElementById('chatAvatar').innerHTML = `<i data-lucide="${rolData.icon}"></i>`;
-            document.getElementById('chatPersonaName').textContent = rolData.name;
-            document.getElementById('chatPersonaRole').textContent = rolData.title;
+            const r = CASOS[state.caso].roles[state.rol];
+            document.getElementById('chatAvatar').innerHTML = `<i data-lucide="${r.icon}"></i>`;
+            document.getElementById('chatPersonaName').textContent = r.name;
+            document.getElementById('chatPersonaRole').textContent = r.title;
             lucide.createIcons();
         }
 
         async function switchRol(newRol) {
             if (newRol === state.rol) return;
-            state.rol = newRol;
-            state.messages = [];
-            state.rolesVisited.add(newRol);
-            updateUI();
-            showLoading('Cambiando stakeholder...');
-            await initPersonaje();
-            hideLoading();
+            state.rol = newRol; state.messages = []; state.rolesVisited.add(newRol);
+            updateUI(); showLoading(); await initPersonaje(); hideLoading();
         }
 
-        // ─── MESSAGES ─────────────────────────────────────────────────────────────────
         function addMessage(role, content, rolData) {
-            const container = document.getElementById('chatMessages');
             const div = document.createElement('div');
             div.className = `msg ${role}`;
             const icon = role === 'user' ? 'user' : (rolData ? rolData.icon : 'info');
-            const name = role === 'user' ? 'Analista' : (rolData ? rolData.name : 'Sistema');
-
             div.innerHTML = `
-                <div class="chat-avatar" style="width:32px; height:32px; font-size:0.8rem"><i data-lucide="${icon}"></i></div>
+                <div class="chat-avatar" style="width:32px; height:32px"><i data-lucide="${icon}"></i></div>
                 <div style="flex:1">
                     <div class="msg-bubble">${content}</div>
-                    <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.4rem; display:flex; align-items:center; gap:0.5rem">
-                        <span>${name}</span>
-                        ${role === 'assistant' ? `<button onclick="openAddReqModal(\`${content.replace(/'/g, "\\'")}\`)" style="background:none; border:none; color:var(--accent-main); cursor:pointer; font-weight:700; font-size:0.65rem">+ REQUISITO</button>` : ''}
+                    <div style="font-size:0.65rem; color:var(--text-muted); margin-top:0.4rem; display:flex; align-items:center; gap:0.5rem">
+                        <span>${role === 'user' ? 'Tú' : rolData?.name || 'Sistema'}</span>
+                        ${role === 'assistant' ? `<button onclick="openAddReqModal(\`${content.replace(/'/g, "\\'").replace(/"/g, '&quot;')}\`)" style="background:none; border:none; color:var(--accent-main); cursor:pointer; font-weight:800">+ REQUISITO</button>` : ''}
                     </div>
-                </div>
-            `;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
+                </div>`;
+            document.getElementById('chatMessages').appendChild(div);
+            document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
             lucide.createIcons();
         }
 
@@ -1568,8 +347,7 @@
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
             if (!text || document.getElementById('btnSend').disabled) return;
-            input.value = '';
-            state.userMsgCount++;
+            input.value = ''; state.userMsgCount++;
             addMessage('user', text, null);
             state.messages.push({ role: 'user', content: text });
             document.getElementById('btnSend').disabled = true;
@@ -1581,45 +359,62 @@
             document.getElementById('btnSend').disabled = false;
         }
 
-        // ─── REQUIREMENTS ─────────────────────────────────────────────────────────────
-        function openAddReqModal(prefill = '') {
-            state.pendingCapture = prefill;
-            document.getElementById('addReqModal').classList.remove('hidden');
-        }
-
+        function openAddReqModal(prefill = '') { state.pendingCapture = prefill; document.getElementById('reqDesc').value = prefill; document.getElementById('addReqModal').classList.remove('hidden'); }
         function saveReq() {
-            const desc = state.pendingCapture || "Nuevo requerimiento";
-            const id = `RF-${String(state.requirements.length + 1).padStart(3, '0')}`;
-            state.requirements.push({ id, desc, source: CASOS[state.caso].roles[state.rol].name });
-            document.getElementById('addReqModal').classList.add('hidden');
-            renderReqs();
+            const desc = document.getElementById('reqDesc').value.trim();
+            if (!desc) return;
+            state.requirements.push({ id: `RF-${String(state.requirements.length + 1).padStart(3, '0')}`, desc, source: CASOS[state.caso].roles[state.rol].name });
+            closeModal('addReqModal'); renderReqs();
         }
-
         function renderReqs() {
-            const list = document.getElementById('reqsList');
             document.getElementById('reqsCount').textContent = state.requirements.length;
-            list.innerHTML = state.requirements.map(r => `
+            document.getElementById('reqsList').innerHTML = state.requirements.map(r => `
                 <div class="card" style="padding:0.75rem; border-left:3px solid var(--accent-main)">
-                    <div style="font-size:0.65rem; font-weight:800; color:var(--accent-main); margin-bottom:0.25rem">${r.id}</div>
-                    <div style="font-size:0.8rem; line-height:1.4">${r.desc.substring(0, 80)}...</div>
-                    <div style="font-size:0.65rem; color:var(--text-muted); margin-top:0.5rem">Fuente: ${r.source}</div>
+                    <div style="font-size:0.65rem; font-weight:800; color:var(--accent-main)">${r.id}</div>
+                    <div style="font-size:0.8rem">${r.desc.substring(0, 100)}...</div>
                 </div>
-            `).join('');
-            if (state.requirements.length === 0) list.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text-muted); font-size:0.8rem">No hay requisitos capturados.</div>';
+            `).join('') || '<div style="text-align:center; padding:2rem; color:var(--text-muted); font-size:0.8rem">Vacio.</div>';
         }
 
-        // ─── UTILS ────────────────────────────────────────────────────────────────────
+        async function callClaude(userMsg, systemOverride = null) {
+            const PERFILES = {
+                1: { sponsor: 'Dr. Roberto, dueño conservador.', cliente: 'Laura, administrativa entusiasta.', usuario: 'Carlos, recepcionista escéptico.' },
+                2: { sponsor: 'Martín, socio tacaño.', cliente: 'Sofía, gerente operativa.', usuario: 'Diego, cajero quemado.' },
+                3: { sponsor: 'Dra. Elena, rectora visionaria.', cliente: 'Ing. Gómez, nostálgico del sistema viejo.', usuario: 'Ana, alumna exigente.' },
+                4: { sponsor: 'Sr. Alejandro, inversionista enfocado en costos.', cliente: 'Valeria, gerente abrumada.', usuario: 'Lucas, recepcionista saturado.' }
+            };
+            const system = systemOverride || `Eres ${PERFILES[state.caso][state.rol]} en un entorno de dificultad ${NIVEL_NAMES[state.nivel]}. No rompas el personaje.`;
+            const apiMessages = state.messages.map(m => ({ role: m.role, content: m.content }));
+            if (userMsg) apiMessages.push({ role: 'user', content: userMsg });
+            const res = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-api-key': state.apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+                body: JSON.stringify({ model: 'claude-3-5-sonnet-20241022', max_tokens: 1000, system, messages: apiMessages })
+            });
+            const data = await res.json(); return data.content[0].text;
+        }
+
+        async function initPersonaje() { try { const reply = await callClaude('Preséntate brevemente.'); state.messages.push({ role: 'assistant', content: reply }); addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]); } catch (e) {} }
+        function toggleSidebar(side) { if (side === 'left') document.getElementById('sidebarLeft').classList.toggle('open'); else document.getElementById('sidebarRight').classList.toggle('active'); }
         function handleInputKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
-        function showLoading(t) { document.getElementById('loadingOverlay').classList.remove('hidden'); }
+        function showLoading() { document.getElementById('loadingOverlay').classList.remove('hidden'); }
         function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function resetSession() { location.reload(); }
-        
-        async function generateIEEE() { alert("Función de generación de documento activada. Revise la consola para el borrador."); console.log("Generando IEEE 830..."); }
-        async function evaluateSession() { alert("Evaluación en curso..."); }
+        function resetSession() { if (confirm('¿Reiniciar?')) location.reload(); }
+        function copyText(id) { navigator.clipboard.writeText(document.getElementById(id).textContent); alert('Copiado'); }
+        async function generateIEEE() {
+            document.getElementById('ieeeModal').classList.remove('hidden');
+            document.getElementById('ieeeOutput').textContent = 'Generando borrador IEEE 830...';
+            const reqs = state.requirements.map(r => `${r.id}: ${r.desc}`).join('\n');
+            const res = await callClaude(`Genera un documento IEEE 830 técnico basado en estos requisitos: ${reqs}`);
+            document.getElementById('ieeeOutput').textContent = res;
+        }
+        async function evaluateSession() {
+            document.getElementById('evalModal').classList.remove('hidden');
+            document.getElementById('evalContent').textContent = 'Evaluando...';
+            const res = await callClaude('Evalúa mi desempeño en esta entrevista de requerimientos. Dame consejos técnicos.');
+            document.getElementById('evalContent').textContent = res;
+        }
     </script>
-    <div class="loading-overlay hidden" id="loadingOverlay">
-        <div class="loading-spinner"></div>
-    </div>
 </body>
 </html>
