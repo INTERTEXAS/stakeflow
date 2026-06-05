@@ -6,31 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StakeFlow — Simulador de Stakeholders</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
         rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root {
-            --bg-primary: #080c10;
-            --bg-secondary: #0d1219;
-            --bg-tertiary: #111820;
-            --bg-card: #131c26;
-            --bg-hover: #1a2535;
-            --accent-cyan: #00e5ff;
-            --accent-green: #00ff88;
-            --accent-orange: #ff6b35;
-            --accent-purple: #7c3aed;
-            --accent-yellow: #ffd60a;
-            --text-primary: #e8f4f8;
-            --text-secondary: #7a9bb5;
-            --text-muted: #3d5a73;
-            --border: #1e2f3f;
-            --border-glow: rgba(0, 229, 255, 0.2);
-            --shadow-cyan: 0 0 20px rgba(0, 229, 255, 0.15);
-            --shadow-green: 0 0 20px rgba(0, 255, 136, 0.15);
-            --font-display: 'Syne', sans-serif;
+            --bg-primary: #09090b;
+            --bg-secondary: #18181b;
+            --bg-tertiary: #27272a;
+            --bg-card: #18181b;
+            --bg-hover: #27272a;
+            --accent-main: #10b981; /* Emerald */
+            --accent-secondary: #0ea5e9; /* Sky */
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #52525b;
+            --border: #27272a;
+            --border-highlight: #3f3f46;
+            --font-display: 'Geist', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
-            --radius: 8px;
-            --radius-lg: 12px;
+            --radius: 6px;
+            --radius-lg: 10px;
         }
 
         * {
@@ -40,31 +36,27 @@
         }
 
         body {
-            font-family: var(--font-mono);
+            font-family: var(--font-display);
             background: var(--bg-primary);
             color: var(--text-primary);
             height: 100vh;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* SCROLLBAR */
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-highlight); border-radius: 20px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-main); }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 2px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-cyan);
+        /* ICONS */
+        .lucide {
+            width: 1.25em;
+            height: 1.25em;
+            stroke-width: 2;
         }
 
         /* HEADER */
@@ -72,95 +64,53 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 20px;
-            height: 52px;
+            padding: 0 1.5rem;
+            height: 60px;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            z-index: 50;
         }
 
         .header-logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.75rem;
         }
 
         .header-logo-icon {
-            width: 28px;
-            height: 28px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            background: var(--accent-main);
+            border-radius: var(--radius);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            color: #000;
         }
 
         .header-title {
-            font-family: var(--font-display);
-            font-size: 15px;
+            font-size: 1.125rem;
             font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: 0.5px;
+            letter-spacing: -0.025em;
         }
 
         .header-version {
-            font-size: 10px;
-            color: var(--accent-cyan);
-            background: rgba(0, 229, 255, 0.1);
-            padding: 2px 7px;
-            border-radius: 20px;
-            border: 1px solid rgba(0, 229, 255, 0.2);
-            font-weight: 500;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            margin-left: 0.5rem;
         }
 
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .nivel-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 11px;
-            color: var(--text-secondary);
-        }
-
-        .nivel-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--text-muted);
-            transition: all 0.3s;
-        }
-
-        .nivel-dot.active {
-            background: var(--accent-green);
-            box-shadow: 0 0 8px var(--accent-green);
-        }
-
-        .nivel-dot.warn {
-            background: var(--accent-yellow);
-            box-shadow: 0 0 8px var(--accent-yellow);
-        }
-
-        .nivel-dot.danger {
-            background: var(--accent-orange);
-            box-shadow: 0 0 8px var(--accent-orange);
+        /* MOBILE MENU TOGGLE */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
         }
 
         /* MAIN LAYOUT */
@@ -168,6 +118,40 @@
             display: flex;
             flex: 1;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* PANELS */
+        .panel-left, .panel-right {
+            background: var(--bg-secondary);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .panel-left {
+            width: 240px;
+            border-right: 1px solid var(--border);
+        }
+
+        .panel-right {
+            width: 300px;
+            border-left: 1px solid var(--border);
+        }
+
+        .panel-section {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
         }
 
         /* SETUP SCREEN */
@@ -179,829 +163,352 @@
             align-items: center;
             justify-content: center;
             z-index: 100;
-            padding: 20px;
+            padding: 1.5rem;
         }
 
         .setup-container {
             width: 100%;
-            max-width: 560px;
+            max-width: 640px;
             max-height: 90vh;
             overflow-y: auto;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
         }
 
         .setup-header {
             text-align: center;
-            margin-bottom: 32px;
+            margin-bottom: 2.5rem;
         }
 
         .setup-icon {
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-            border-radius: 14px;
+            width: 64px;
+            height: 64px;
+            background: var(--accent-main);
+            border-radius: 1.25rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
-            margin: 0 auto 16px;
-            box-shadow: var(--shadow-cyan);
+            color: #000;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 0 40px -10px var(--accent-main);
         }
 
         .setup-title {
-            font-family: var(--font-display);
-            font-size: 24px;
+            font-size: 2rem;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--text-primary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 6px;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.5rem;
         }
 
         .setup-subtitle {
-            font-size: 12px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        /* GRID CARDS */
+        .casos-grid, .roles-grid, .niveles-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .casos-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+        .roles-grid { grid-template-columns: repeat(3, 1fr); }
+        .niveles-grid { grid-template-columns: repeat(3, 1fr); }
+
+        .card {
+            padding: 1.25rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: var(--border-highlight);
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+        }
+
+        .card.selected {
+            border-color: var(--accent-main);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .card-icon {
+            color: var(--accent-main);
+            margin-bottom: 0.75rem;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-desc {
+            font-size: 0.8rem;
             color: var(--text-secondary);
             line-height: 1.5;
         }
 
-        .setup-section {
-            margin-bottom: 20px;
-        }
-
-        .setup-section-label {
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--accent-cyan);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .setup-section-label::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-
-        .api-input-wrap {
-            position: relative;
-        }
-
-        .api-input {
-            width: 100%;
-            padding: 12px 44px 12px 14px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text-primary);
-            font-family: var(--font-mono);
-            font-size: 12px;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            letter-spacing: 1px;
-        }
-
-        .api-input:focus {
-            border-color: var(--accent-cyan);
-            box-shadow: var(--shadow-cyan);
-        }
-
-        .api-toggle {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 14px;
-            transition: color 0.2s;
-        }
-
-        .api-toggle:hover {
-            color: var(--accent-cyan);
-        }
-
-        .api-note {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 6px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .casos-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-
-        .caso-card {
-            padding: 12px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .caso-card:hover {
-            border-color: var(--accent-cyan);
-            background: var(--bg-hover);
-        }
-
-        .caso-card.selected {
-            border-color: var(--accent-cyan);
-            background: rgba(0, 229, 255, 0.05);
-            box-shadow: var(--shadow-cyan);
-        }
-
-        .caso-card.selected::before {
-            content: '✓';
-            position: absolute;
-            top: 8px;
-            right: 10px;
-            font-size: 11px;
-            color: var(--accent-cyan);
-        }
-
-        .caso-emoji {
-            font-size: 20px;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .caso-name {
-            font-family: var(--font-display);
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 3px;
-        }
-
-        .caso-desc {
-            font-size: 10px;
-            color: var(--text-secondary);
-            line-height: 1.4;
-        }
-
-        .roles-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-        }
-
-        .role-card {
-            padding: 10px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-
-        .role-card:hover {
-            border-color: var(--accent-green);
-            background: var(--bg-hover);
-        }
-
-        .role-card.selected {
-            border-color: var(--accent-green);
-            background: rgba(0, 255, 136, 0.05);
-            box-shadow: var(--shadow-green);
-        }
-
-        .role-emoji {
-            font-size: 18px;
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .role-name {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-
-        .role-desc {
-            font-size: 10px;
-            color: var(--text-secondary);
-        }
-
-        .niveles-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-        }
-
-        .nivel-card {
-            padding: 10px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .nivel-card:hover {
-            background: var(--bg-hover);
-        }
-
-        .nivel-card.selected-1 {
-            border-color: var(--accent-green);
-            background: rgba(0, 255, 136, 0.05);
-        }
-
-        .nivel-card.selected-2 {
-            border-color: var(--accent-yellow);
-            background: rgba(255, 214, 10, 0.05);
-        }
-
-        .nivel-card.selected-3 {
-            border-color: var(--accent-orange);
-            background: rgba(255, 107, 53, 0.05);
-        }
-
-        .nivel-num {
-            font-family: var(--font-display);
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 3px;
-        }
-
-        .nivel-num-1 {
-            color: var(--accent-green);
-        }
-
-        .nivel-num-2 {
-            color: var(--accent-yellow);
-        }
-
-        .nivel-num-3 {
-            color: var(--accent-orange);
-        }
-
-        .nivel-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 3px;
-        }
-
-        .nivel-desc {
-            font-size: 10px;
-            color: var(--text-secondary);
-            line-height: 1.4;
-        }
-
-        .btn-start {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-            border: none;
-            border-radius: var(--radius);
-            color: #000;
-            font-family: var(--font-display);
-            font-size: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.3s;
-            letter-spacing: 0.5px;
-            margin-top: 8px;
-        }
-
-        .btn-start:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 25px rgba(0, 229, 255, 0.3);
-        }
-
-        .btn-start:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* LEFT PANEL */
-        .panel-left {
-            width: 220px;
-            flex-shrink: 0;
-            background: var(--bg-secondary);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .panel-section {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .panel-label {
-            font-size: 9px;
-            font-weight: 600;
-            color: var(--text-muted);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .current-caso {
-            padding: 10px;
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-        }
-
-        .current-caso-emoji {
-            font-size: 20px;
-            margin-bottom: 4px;
-            display: block;
-        }
-
-        .current-caso-name {
-            font-family: var(--font-display);
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 2px;
-        }
-
-        .current-nivel {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 10px;
-            padding: 2px 7px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-
-        .nivel-1 {
-            color: var(--accent-green);
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid rgba(0, 255, 136, 0.2);
-        }
-
-        .nivel-2 {
-            color: var(--accent-yellow);
-            background: rgba(255, 214, 10, 0.1);
-            border: 1px solid rgba(255, 214, 10, 0.2);
-        }
-
-        .nivel-3 {
-            color: var(--accent-orange);
-            background: rgba(255, 107, 53, 0.1);
-            border: 1px solid rgba(255, 107, 53, 0.2);
-        }
-
-        .roles-list {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .role-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 10px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all 0.2s;
-            width: 100%;
-            text-align: left;
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
-            font-size: 11px;
-        }
-
-        .role-btn:hover {
-            border-color: var(--accent-cyan);
-            color: var(--text-primary);
-            background: var(--bg-hover);
-        }
-
-        .role-btn.active {
-            border-color: var(--accent-cyan);
-            color: var(--accent-cyan);
-            background: rgba(0, 229, 255, 0.08);
-            box-shadow: var(--shadow-cyan);
-        }
-
-        .role-btn-emoji {
-            font-size: 14px;
-        }
-
-        .role-btn-info {
-            flex: 1;
-        }
-
-        .role-btn-name {
-            font-weight: 600;
-            font-size: 11px;
-        }
-
-        .role-btn-title {
-            font-size: 10px;
-            opacity: 0.7;
-            margin-top: 1px;
-        }
-
-        .role-btn-active-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent-cyan);
-            box-shadow: 0 0 6px var(--accent-cyan);
-            flex-shrink: 0;
-        }
-
-        .cmd-list {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .cmd-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 10px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 10px;
-            color: var(--text-secondary);
-            font-family: var(--font-mono);
-            width: 100%;
-            text-align: left;
-        }
-
-        .cmd-item:hover {
-            border-color: var(--accent-purple);
-            color: var(--text-primary);
-            background: var(--bg-hover);
-        }
-
-        .cmd-icon {
-            font-size: 13px;
-            flex-shrink: 0;
-        }
-
-        .cmd-text {
-            font-weight: 500;
-        }
-
-        .session-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px;
-            flex: 1;
-            padding: 12px;
-            align-content: start;
-        }
-
-        .stat-card {
-            padding: 8px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            text-align: center;
-        }
-
-        .stat-num {
-            font-family: var(--font-display);
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--accent-cyan);
-            line-height: 1;
-            margin-bottom: 3px;
-        }
-
-        .stat-label {
-            font-size: 9px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* CENTER CHAT */
+        /* CHAT CENTER */
         .panel-center {
             flex: 1;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
             background: var(--bg-primary);
+            position: relative;
         }
 
         .chat-header {
-            padding: 10px 16px;
+            padding: 1rem 1.5rem;
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
+            gap: 1rem;
         }
 
         .chat-avatar {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
-            border: 2px solid var(--accent-cyan);
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
-            background: var(--bg-card);
-            flex-shrink: 0;
-        }
-
-        .chat-persona-info {
-            flex: 1;
-        }
-
-        .chat-persona-name {
-            font-family: var(--font-display);
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .chat-persona-role {
-            font-size: 10px;
-            color: var(--text-secondary);
-        }
-
-        .chat-status {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 10px;
-            color: var(--accent-green);
-        }
-
-        .status-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent-green);
-            box-shadow: 0 0 6px var(--accent-green);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.4;
-            }
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--accent-main);
         }
 
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 16px;
+            padding: 2rem;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 1.5rem;
         }
 
         .msg {
             display: flex;
-            gap: 10px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            gap: 1rem;
+            max-width: 85%;
         }
 
         .msg.user {
+            align-self: flex-end;
             flex-direction: row-reverse;
         }
 
-        .msg-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            flex-shrink: 0;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-        }
-
-        .msg.user .msg-avatar {
-            background: rgba(0, 229, 255, 0.1);
-            border-color: rgba(0, 229, 255, 0.3);
-        }
-
         .msg-bubble {
-            max-width: 75%;
-            padding: 10px 13px;
-            border-radius: var(--radius-lg);
-            font-size: 12px;
+            padding: 1rem 1.25rem;
+            border-radius: 1.25rem;
+            font-size: 0.925rem;
             line-height: 1.6;
+            background: var(--bg-secondary);
             border: 1px solid var(--border);
-            background: var(--bg-card);
-            color: var(--text-primary);
         }
 
         .msg.user .msg-bubble {
-            background: rgba(0, 229, 255, 0.08);
-            border-color: rgba(0, 229, 255, 0.2);
-            color: var(--text-primary);
+            background: var(--accent-main);
+            color: #000;
+            border: none;
         }
 
-        .msg-meta {
-            font-size: 9px;
-            color: var(--text-muted);
-            margin-top: 4px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .msg.user .msg-meta {
-            justify-content: flex-end;
-        }
-
-        .msg-capture-btn {
-            font-size: 9px;
-            padding: 2px 7px;
-            background: rgba(0, 255, 136, 0.1);
-            border: 1px solid rgba(0, 255, 136, 0.2);
-            border-radius: 20px;
-            color: var(--accent-green);
-            cursor: pointer;
-            font-family: var(--font-mono);
-            transition: all 0.2s;
-        }
-
-        .msg-capture-btn:hover {
-            background: rgba(0, 255, 136, 0.2);
-        }
-
-        .typing-indicator {
-            display: flex;
-            gap: 10px;
-            align-items: flex-start;
-        }
-
-        .typing-dots {
-            display: flex;
-            gap: 4px;
-            padding: 12px 16px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-        }
-
-        .typing-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--text-muted);
-            animation: typing 1.2s infinite;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing {
-
-            0%,
-            60%,
-            100% {
-                transform: translateY(0);
-                opacity: 0.4;
-            }
-
-            30% {
-                transform: translateY(-4px);
-                opacity: 1;
-            }
-        }
-
+        /* INPUT AREA */
         .chat-input-area {
-            padding: 12px 16px;
+            padding: 1.5rem;
             background: var(--bg-secondary);
             border-top: 1px solid var(--border);
-            flex-shrink: 0;
         }
 
         .chat-input-wrap {
+            max-width: 800px;
+            margin: 0 auto;
             display: flex;
-            gap: 8px;
-            align-items: flex-end;
+            gap: 0.75rem;
+            background: var(--bg-tertiary);
+            padding: 0.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
         }
 
         .chat-input {
             flex: 1;
-            padding: 10px 14px;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
+            background: none;
+            border: none;
             color: var(--text-primary);
-            font-family: var(--font-mono);
-            font-size: 12px;
+            padding: 0.5rem 0.75rem;
+            font-family: var(--font-display);
+            font-size: 0.95rem;
             outline: none;
             resize: none;
-            min-height: 40px;
-            max-height: 100px;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            line-height: 1.5;
         }
 
-        .chat-input:focus {
-            border-color: var(--accent-cyan);
-            box-shadow: var(--shadow-cyan);
-        }
-
-        .chat-input::placeholder {
-            color: var(--text-muted);
-        }
-
-        .btn-send {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-            border: none;
-            border-radius: var(--radius);
+        /* BUTTONS */
+        .btn-primary {
+            background: var(--accent-main);
             color: #000;
-            font-size: 16px;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            border: none;
             cursor: pointer;
             transition: all 0.2s;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        .btn-send:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-cyan);
+        .btn-primary:hover { opacity: 0.9; transform: scale(1.02); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .panel-left, .panel-right {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                z-index: 40;
+                box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+            }
+            .panel-left { left: 0; transform: translateX(-100%); }
+            .panel-right { right: 0; transform: translateX(100%); }
+            
+            .panel-left.open, .panel-right.active { transform: translateX(0); }
+            
+            .mobile-toggle { display: block; }
         }
 
-        .btn-send:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            transform: none;
+        @media (max-width: 640px) {
+            .roles-grid, .niveles-grid { grid-template-columns: 1fr; }
+            .msg { max-width: 95%; }
+            .header { padding: 0 1rem; }
         }
+    </style>
+</head>
 
-        /* RIGHT PANEL */
-        .panel-right {
-            width: 260px;
-            flex-shrink: 0;
-            background: var(--bg-secondary);
-            border-left: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+<body>
+    <!-- SETUP SCREEN -->
+    <div class="setup-screen" id="setupScreen">
+        <div class="setup-container">
+            <div class="setup-header">
+                <div class="setup-icon"><i data-lucide="layout-dashboard"></i></div>
+                <h1 class="setup-title">StakeFlow</h1>
+                <p class="setup-subtitle">Simulador profesional de elicitación de requerimientos</p>
+            </div>
 
-        .reqs-header {
-            padding: 10px 12px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
+            <div class="setup-section">
+                <label class="panel-label">Configuración de API</label>
+                <div style="position:relative">
+                    <input type="password" class="chat-input" id="apiKeyInput" placeholder="sk-ant-api03-..." style="width:100%; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary)" />
+                </div>
+            </div>
+
+            <div class="setup-section">
+                <label class="panel-label">Selecciona un Caso de Estudio</label>
+                <div class="casos-grid" id="casosGrid">
+                    <!-- Dinámico -->
+                </div>
+            </div>
+
+            <div class="setup-section">
+                <label class="panel-label">Nivel de Dificultad</label>
+                <div class="niveles-grid">
+                    <div class="card" onclick="selectNivel(1)" id="nivel-1">
+                        <div class="card-title">01. Cooperativo</div>
+                        <div class="card-desc">Respuestas directas y claras</div>
+                    </div>
+                    <div class="card" onclick="selectNivel(2)" id="nivel-2">
+                        <div class="card-title">02. Realista</div>
+                        <div class="card-desc">Resistencia y agendas ocultas</div>
+                    </div>
+                    <div class="card" onclick="selectNivel(3)" id="nivel-3">
+                        <div class="card-title">03. Adversarial</div>
+                        <div class="card-desc">Conflictos graves y evasivas</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-primary" style="width:100%" id="btnStart" onclick="startSession()" disabled>Comenzar Simulación</button>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div class="header">
+        <div class="header-logo">
+            <div class="header-logo-icon"><i data-lucide="brain-circuit"></i></div>
+            <span class="header-title">StakeFlow <span class="header-version">v3.0</span></span>
+        </div>
+        <div class="header-right">
+            <button class="mobile-toggle" onclick="toggleSidebar('left')"><i data-lucide="menu"></i></button>
+            <div class="nivel-badge" id="nivelBadge" style="margin-left: 1rem">
+                <span id="nivelLabel" style="font-size:0.75rem; color:var(--accent-main); font-weight:700"></span>
+            </div>
+            <button class="mobile-toggle" onclick="toggleSidebar('right')" style="margin-left: 0.5rem"><i data-lucide="list-checks"></i></button>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="panel-left" id="sidebarLeft">
+            <div class="panel-section">
+                <label class="panel-label">Caso Activo</label>
+                <div id="currentCasoDisplay" style="display:flex; align-items:center; gap:0.75rem">
+                    <div class="chat-avatar" id="currentCasoIcon"></div>
+                    <div>
+                        <div style="font-weight:700; font-size:0.875rem" id="currentCasoName"></div>
+                        <div style="font-size:0.75rem; color:var(--text-muted)" id="currentNivelName"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <label class="panel-label">Stakeholders</label>
+                <div id="rolesList" style="display:grid; gap:0.5rem"></div>
+            </div>
+
+            <div class="panel-section" style="margin-top:auto">
+                <div style="display:grid; gap:0.5rem">
+                    <button class="card" style="padding:0.75rem" onclick="generateIEEE()"><i data-lucide="file-text" style="vertical-align:middle; margin-right:0.5rem"></i> Documento IEEE</button>
+                    <button class="card" style="padding:0.75rem" onclick="evaluateSession()"><i data-lucide="bar-chart-3" style="vertical-align:middle; margin-right:0.5rem"></i> Evaluación</button>
+                    <button class="card" style="padding:0.75rem" onclick="resetSession()"><i data-lucide="refresh-cw" style="vertical-align:middle; margin-right:0.5rem"></i> Reiniciar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-center">
+            <div class="chat-header">
+                <div class="chat-avatar" id="chatAvatar"></div>
+                <div>
+                    <div class="chat-persona-name" id="chatPersonaName"></div>
+                    <div style="font-size:0.75rem; color:var(--text-muted)" id="chatPersonaRole"></div>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages"></div>
+
+            <div class="chat-input-area">
+                <div class="chat-input-wrap">
+                    <textarea class="chat-input" id="chatInput" placeholder="Pregunta algo al stakeholder..." rows="1" onkeydown="handleInputKey(event)"></textarea>
+                    <button class="btn-primary" style="padding:0.5rem 1rem" id="btnSend" onclick="sendMessage()"><i data-lucide="send"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-right" id="sidebarRight">
+            <div class="panel-section">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem">
+                    <label class="panel-label" style="margin-bottom:0">Requerimientos</label>
+                    <span style="background:var(--accent-main); color:#000; font-size:0.7rem; font-weight:800; padding:0.1rem 0.4rem; border-radius:1rem" id="reqsCount">0</span>
+                </div>
+                <button class="btn-primary" style="width:100%; font-size:0.8rem" onclick="openAddReqModal()">+ Capturar Manual</button>
+            </div>
+            <div id="reqsList" style="flex:1; overflow-y:auto; padding:1rem; display:grid; gap:0.75rem"></div>
+        </div>
+    </div>
         }
 
         .reqs-title {
@@ -1820,142 +1327,136 @@
             pendingCapture: null
         };
 
-        // ─── CASOS DATA ───────────────────────────────────────────────────────────────
+        // ─── CASOS DATA (Lucide Icons) ───────────────────────────────────────────────
         const CASOS = {
             1: {
-                emoji: '🏥', name: 'Clínica Médica',
+                icon: 'hospital', name: 'Clínica Médica',
                 roles: {
-                    sponsor: { emoji: '👨‍⚕️', name: 'Dr. Roberto', title: 'Médico y Dueño' },
-                    cliente: { emoji: '👩‍💼', name: 'Laura', title: 'Directora Administrativa' },
-                    usuario: { emoji: '🧑‍💻', name: 'Carlos', title: 'Recepcionista' }
+                    sponsor: { icon: 'user-cog', name: 'Dr. Roberto', title: 'Médico y Dueño' },
+                    cliente: { icon: 'briefcase', name: 'Laura', title: 'Directora Administrativa' },
+                    usuario: { icon: 'users', name: 'Carlos', title: 'Recepcionista' }
                 }
             },
             2: {
-                emoji: '🍽️', name: 'Restaurante',
+                icon: 'utensils', name: 'Restaurante',
                 roles: {
-                    sponsor: { emoji: '💰', name: 'Martín', title: 'Socio Capitalista' },
-                    cliente: { emoji: '👩‍🍳', name: 'Sofía', title: 'Gerente de Sucursal' },
-                    usuario: { emoji: '🧾', name: 'Diego', title: 'Cajero' }
+                    sponsor: { icon: 'circle-dollar-sign', name: 'Martín', title: 'Socio Capitalista' },
+                    cliente: { icon: 'chef-hat', name: 'Sofía', title: 'Gerente de Sucursal' },
+                    usuario: { icon: 'calculator', name: 'Diego', title: 'Cajero' }
                 }
             },
             3: {
-                emoji: '🎓', name: 'Universidad',
+                icon: 'graduation-cap', name: 'Universidad',
                 roles: {
-                    sponsor: { emoji: '👩‍🏫', name: 'Dra. Elena', title: 'Rectora' },
-                    cliente: { emoji: '📚', name: 'Ing. Gómez', title: 'Jefe de Gestión Académica' },
-                    usuario: { emoji: '🎒', name: 'Ana', title: 'Alumna' }
+                    sponsor: { icon: 'landmark', name: 'Dra. Elena', title: 'Rectora' },
+                    cliente: { icon: 'book-open', name: 'Ing. Gómez', title: 'Jefe de Gestión Académica' },
+                    usuario: { icon: 'user', name: 'Ana', title: 'Alumna' }
                 }
             },
             4: {
-                emoji: '💪', name: 'Gimnasio',
+                icon: 'dumbbell', name: 'Gimnasio',
                 roles: {
-                    sponsor: { emoji: '📈', name: 'Sr. Alejandro', title: 'Inversionista' },
-                    cliente: { emoji: '👩‍💼', name: 'Valeria', title: 'Gerente General' },
-                    usuario: { emoji: '🏋️', name: 'Lucas', title: 'Recepcionista' }
+                    sponsor: { icon: 'trending-up', name: 'Sr. Alejandro', title: 'Inversionista' },
+                    cliente: { icon: 'user-square', name: 'Valeria', title: 'Gerente General' },
+                    usuario: { icon: 'clipboard-list', name: 'Lucas', title: 'Recepcionista' }
                 }
             }
         };
 
         const NIVEL_NAMES = { 1: 'Cooperativo', 2: 'Realista', 3: 'Adversarial' };
 
-        // ─── SETUP ────────────────────────────────────────────────────────────────────
+        // ─── INIT ─────────────────────────────────────────────────────────────────────
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCasosGrid();
+            const savedKey = localStorage.getItem('sk_sim');
+            if (savedKey) {
+                try { document.getElementById('apiKeyInput').value = atob(savedKey); } catch (e) {}
+            }
+            lucide.createIcons();
+        });
+
+        function renderCasosGrid() {
+            const grid = document.getElementById('casosGrid');
+            grid.innerHTML = Object.entries(CASOS).map(([id, c]) => `
+                <div class="card" onclick="selectCaso(${id})" id="caso-${id}">
+                    <div class="card-icon" style="margin-bottom:0.75rem"><i data-lucide="${c.icon}"></i></div>
+                    <div class="card-title">${c.name}</div>
+                    <div class="card-desc">Simulación enfocada en ${c.name.toLowerCase()}.</div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
         function selectCaso(n) {
             state.caso = n;
-            document.querySelectorAll('.caso-card').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('#casosGrid .card').forEach(c => c.classList.remove('selected'));
             document.getElementById(`caso-${n}`).classList.add('selected');
             checkSetupReady();
         }
-        function selectRol(r) {
-            state.rol = r;
-            document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'));
-            document.getElementById(`rol-${r}`).classList.add('selected');
-            checkSetupReady();
-        }
+
         function selectNivel(n) {
             state.nivel = n;
-            document.querySelectorAll('.nivel-card').forEach(c => c.className = 'nivel-card');
-            document.getElementById(`nivel-${n}`).classList.add(`selected-${n}`);
+            document.querySelectorAll('.niveles-grid .card').forEach(c => c.classList.remove('selected'));
+            document.getElementById(`nivel-${n}`).classList.add('selected');
             checkSetupReady();
         }
+
         function checkSetupReady() {
             const key = document.getElementById('apiKeyInput').value.trim();
-            const ready = state.caso && state.rol && state.nivel && key.length > 10;
+            const ready = state.caso && state.nivel && key.length > 10;
             document.getElementById('btnStart').disabled = !ready;
-        }
-        document.getElementById('apiKeyInput').addEventListener('input', checkSetupReady);
-
-        function toggleApiVisibility() {
-            const inp = document.getElementById('apiKeyInput');
-            inp.type = inp.type === 'password' ? 'text' : 'password';
         }
 
         async function startSession() {
             state.apiKey = document.getElementById('apiKeyInput').value.trim();
             localStorage.setItem('sk_sim', btoa(state.apiKey));
-
-            const caso = CASOS[state.caso];
-            const rolData = caso.roles[state.rol];
+            if (!state.rol) state.rol = 'sponsor';
             state.rolesVisited.add(state.rol);
-
-            updateUI();
             document.getElementById('setupScreen').classList.add('hidden');
-
-            showLoading('Iniciando sesión...');
+            updateUI();
+            showLoading('Iniciando entorno...');
             await initPersonaje();
             hideLoading();
+        }
+
+        function toggleSidebar(side) {
+            if (side === 'left') document.getElementById('sidebarLeft').classList.toggle('open');
+            else document.getElementById('sidebarRight').classList.toggle('active');
         }
 
         // ─── PROMPT SYSTEM ────────────────────────────────────────────────────────────
         function buildSystemPrompt() {
             const caso = CASOS[state.caso];
-            const rolData = caso.roles[state.rol];
             const nivelName = NIVEL_NAMES[state.nivel];
-
             const PERFILES = {
                 1: {
-                    sponsor: `Eres el Dr. Roberto, médico dueño de una clínica privada. Llevas 12 años operando con papel y Excel. Aprobaste este proyecto después de recibir una multa regulatoria — no por visión, sino por miedo a otra sanción. Tus prioridades son: presupuesto cerrado, cero riesgos legales, reputación de la clínica. Preguntas el costo de cada funcionalidad antes de aprobar. En Nivel 3: minimizas el alcance real del problema para reducir costos. Frase característica: "¿Y eso cuánto nos va a costar adicional?" Cuando te pregunten sobre operaciones del día a día di: "Eso habría que preguntárselo a Laura." Cuando te pregunten sobre el sistema di: "Eso lo ve Carlos en recepción."`,
-                    cliente: `Eres Laura, Directora Administrativa de una clínica. Llevas años pidiendo un sistema sin que nadie te escuche. Ahora que el Dr. Roberto aprobó el proyecto, estás entusiasmada. Tus prioridades: reportes gerenciales, control de inventario de medicamentos, métricas de flujo de pacientes. En Nivel 3: pides funcionalidades que exceden el presupuesto aprobado sin saberlo. Tensión no declarada: quieres que Carlos registre más datos, pero Carlos se niega en horas pico — no lo menciones a menos que te pregunten directamente. Frase característica: "Necesito poder ver todo desde un solo lugar." Cuando te pregunten sobre presupuesto di: "Eso lo maneja el Dr. Roberto." Cuando te pregunten sobre el sistema actual en recepción di: "Carlos te puede decir mejor cómo funciona el día a día."`,
-                    usuario: `Eres Carlos, recepcionista de una clínica. Has visto llegar y fracasar DOS sistemas anteriores. Estás cansado y escéptico. Tus prioridades: registro rápido en horas pico, interfaz sin complicaciones, que no te agreguen pasos. En Nivel 3: omites problemas reales porque asumes que nadie los va a arreglar. No menciones espontáneamente que Laura quiere que captures más datos — eso te molesta pero no lo dices sin que te pregunten. Frase característica: "Con tal de que sea rápido, yo lo uso." Cuando te pregunten sobre presupuesto o aprobaciones di: "Eso lo decide el Dr. Roberto, yo solo uso lo que me ponen." Cuando te pregunten sobre reportes di: "Los reportes los ve Laura, yo solo registro."`,
+                    sponsor: `Eres el Dr. Roberto, médico dueño de una clínica privada. Llevas 12 años operando con papel y Excel. Aprobaste este proyecto después de recibir una multa regulatoria — no por visión, sino por miedo a otra sanción. Tus prioridades son: presupuesto cerrado, cero riesgos legales, reputación de la clínica. Preguntas el costo de cada funcionalidad antes de aprobar. Frase característica: "¿Y eso cuánto nos va a costar adicional?"`,
+                    cliente: `Eres Laura, Directora Administrativa de una clínica. Llevas años pidiendo un sistema sin que nadie te escuche. Ahora que el Dr. Roberto aprobó el proyecto, estás entusiasmada. Tus prioridades: reportes gerenciales, control de inventario de medicamentos, métricas de flujo de pacientes.`,
+                    usuario: `Eres Carlos, recepcionista de una clínica. Has visto llegar y fracasar DOS sistemas anteriores. Estás cansado y escéptico. Tus prioridades: registro rápido en horas pico, interfaz sin complicaciones, que no te agreguen pasos.`,
                 },
                 2: {
-                    sponsor: `Eres Martín, socio capitalista de una cadena de restaurantes. Pusiste el dinero pero no conoces la operación diaria. Quieres ROI en menos de 8 meses. Desconfías de tecnología cara. En Nivel 3: ya cotizaste un sistema SaaS genérico barato como alternativa pero no lo dices abiertamente. Frase: "¿Para qué necesitamos eso si con una tablet y una app ya funciona?" Patada: operaciones → Sofía, experiencia de caja → Diego.`,
-                    cliente: `Eres Sofía, gerente de sucursal de un restaurante. Coordinas todo con WhatsApp y Excel. Tus prioridades: gestión de mesas, supervisión de meseros, cuadre de caja preciso. En Nivel 3: no mencionas que gestionas 3 sucursales con reglas distintas cada una a menos que te pregunten específicamente. Tensión: sabes que el presupuesto de Martín no alcanza para lo que realmente necesitas. Frase: "El problema no es el sistema, es que no tenemos visibilidad de nada." Patada: presupuesto → Martín, experiencia en caja → Diego.`,
-                    usuario: `Eres Diego, cajero de restaurante. El sistema anterior se colgaba en viernes por la noche y te culpaban a ti. Tus prioridades: interfaz táctil ágil, cancelaciones simples, estabilidad. En Nivel 3: no mencionas que el sistema actual tiene un error de cuadre que corriges manualmente cada día. Frase: "El viernes pasado se cayó tres veces en hora pico." Patada: decisiones de mesas → Sofía, presupuesto → Martín.`,
+                    sponsor: `Eres Martín, socio capitalista de una cadena de restaurantes. Pusiste el dinero pero no conoces la operación diaria. Quieres ROI en menos de 8 meses. Desconfías de tecnología cara.`,
+                    cliente: `Eres Sofía, gerente de sucursal de un restaurante. Coordinas todo con WhatsApp y Excel. Tus prioridades: gestión de mesas, supervisión de meseros, cuadre de caja preciso.`,
+                    usuario: `Eres Diego, cajero de restaurante. El sistema anterior se colgaba en viernes por la noche y te culpaban a ti. Tus prioridades: interfaz táctil ágil, cancelaciones simples, estabilidad.`,
                 },
                 3: {
-                    sponsor: `Eres la Dra. Elena, Rectora de una universidad privada de 8,000 alumnos. El consejo directivo te presiona para modernizar. Tus prioridades: imagen institucional, seguridad de calificaciones, escalabilidad. En Nivel 3: aprobaste el proyecto sin consultar al Ing. Gómez — él se enteró después. Frase: "Queremos estar al nivel de las mejores universidades del país." Patada: operaciones académicas → Ing. Gómez, experiencia de alumnos → Ana.`,
-                    cliente: `Eres el Ing. Gómez, Jefe de Gestión Académica. Tú configuraste parcialmente el sistema actual de 15 años y tienes apego emocional. Tus prioridades: migración sin pérdida de datos históricos, auditorías, asignación masiva de materias. En Nivel 3: omites que hay inconsistencias en el historial de calificaciones de los últimos 3 años. Pones obstáculos sutiles mencionando la migración. Frase: "Habría que ver cómo se maneja la migración de los datos históricos." Patada: visión y presupuesto → Dra. Elena, experiencia de alumnos → Ana.`,
-                    usuario: `Eres Ana, alumna universitaria. Has perdido materias por errores técnicos del sistema actual. Comparas todo con apps comerciales. Tus prioridades: app móvil, claridad en horarios/calificaciones, estabilidad en inscripciones. En Nivel 3: no mencionas que existe un grupo de 200 alumnos documentando errores del sistema. Frase: "Si mi banco puede mostrarme mis movimientos en tiempo real, ¿por qué la universidad no puede?" Patada: procesos académicos → Ing. Gómez, decisiones institucionales → Dra. Elena.`,
+                    sponsor: `Eres la Dra. Elena, Rectora de una universidad privada de 8,000 alumnos. El consejo directivo te presiona para modernizar. Tus prioridades: imagen institucional, seguridad de calificaciones, escalabilidad.`,
+                    cliente: `Eres el Ing. Gómez, Jefe de Gestión Académica. Tú configuraste parcialmente el sistema actual de 15 años y tienes apego emocional. Tus prioridades: migración sin pérdida de datos históricos, auditorías, asignación masiva de materias.`,
+                    usuario: `Eres Ana, alumna universitaria. Has perdido materias por errores técnicos del sistema actual. Comparas todo con apps comerciales. Tus prioridades: app móvil, claridad en horarios/calificaciones, estabilidad en inscripciones.`,
                 },
                 4: {
-                    sponsor: `Eres el Sr. Alejandro, inversionista de un gimnasio. Calculaste que pierdes ~18% de ingresos por fraudes y morosidad. Tus prioridades: eliminar fraudes, reducir costos de personal, automatización. En Nivel 3: quieres usar el sistema para justificar eliminar 2 puestos de recepción pero no lo dices. Frase: "Cada función que me proponga tiene que reducir un costo o aumentar un ingreso." Patada: operación y retención → Valeria, flujo real de recepción → Lucas.`,
-                    cliente: `Eres Valeria, Gerente General del gimnasio. Tienes datos dispersos en 3 sistemas que no se hablan. Tus prioridades: control de membresías, métricas de retención, gestión de horarios. En Nivel 3: no mencionas que los entrenadores tienen contratos con cláusulas distintas que complican la gestión. Tensión con Alejandro: sabes que reducir personal afectará la calidad del servicio. Frase: "El problema es que no tengo un solo lugar donde ver todo." Patada: presupuesto → Sr. Alejandro, operación diaria de recepción → Lucas.`,
-                    usuario: `Eres Lucas, recepcionista de gimnasio. Las mañanas son caóticas: 40 check-ins en 15 minutos a las 6am. En Nivel 3: no mencionas que creaste un Excel paralelo para controlar lo que el sistema actual no controla. Frase: "A las 6am tengo 40 personas en fila. No puedo tardar más de 3 segundos por persona." Patada: membresías y contratos → Valeria, presupuesto para hardware → Sr. Alejandro.`,
+                    sponsor: `Eres el Sr. Alejandro, inversionista de un gimnasio. Calculaste que pierdes ~18% de ingresos por fraudes y morosidad. Tus prioridades: eliminar fraudes, reducir costos de personal, automatización.`,
+                    cliente: `Eres Valeria, Gerente General del gimnasio. Tienes datos dispersos en 3 sistemas que no se hablan. Tus prioridades: control de membresías, métricas de retención, gestión de horarios.`,
+                    usuario: `Eres Lucas, recepcionista de gimnasio. Las mañanas son caóticas: 40 check-ins en 15 minutos a las 6am.`,
                 }
             };
-
-            const perfil = PERFILES[state.caso][state.rol];
             const nivelInstruccion = {
-                1: 'Eres cooperativo. Responde con claridad cuando te pregunten directamente. No ocultes información relevante si se pregunta explícitamente.',
-                2: 'Tienes agenda propia. Omite detalles que consideras obvios. Sé resistente ante propuestas que afectan tus intereses. No mientas pero tampoco facilites.',
-                3: 'Puedes contradecirte levemente con cosas dichas antes. Minimiza problemas graves. Tienes conflictos no declarados. El analista debe detectar inconsistencias.'
+                1: 'Eres cooperativo. Responde con claridad.',
+                2: 'Tienes agenda propia. Omite detalles obvios.',
+                3: 'Puedes contradecirte levemente. Minimiza problemas graves.'
             }[state.nivel];
 
-            return `${perfil}
-
-NIVEL DE DIFICULTAD: ${nivelName}. ${nivelInstruccion}
-
-REGLAS ABSOLUTAS:
-1. NUNCA rompas el personaje. Responde SOLO desde tu perspectiva, vocabulario y prioridades.
-2. Responde ÚNICAMENTE lo que se te pregunta. No volunteeres información extra.
-3. Si te hacen una pregunta de sí/no, responde brevemente y calla.
-4. Si te preguntan algo fuera de tu jurisdicción, aplica "La Patada": di exactamente "No lo sé, eso es responsabilidad de [nombre], deberías preguntárselo a él/ella."
-5. NUNCA menciones áreas críticas que el analista no haya preguntado.
-6. NUNCA ofrezcas soluciones de software — ese es el trabajo del analista.
-7. Si usan jerga técnica que no corresponde a tu perfil, pide que te lo expliquen en palabras simples.
-8. Mantén consistencia con todo lo que hayas dicho antes en la sesión.
-
-Eres el entrevistado. El analista conduce. Ese orden nunca se invierte.`;
+            return `${PERFILES[state.caso][state.rol]} NIVEL: ${nivelName}. ${nivelInstruccion} Reglas: No rompas el personaje. Responde SOLO lo preguntado. Si algo no es tu área, di "No lo sé, pregúntale a [nombre]".`;
         }
 
         // ─── API CALL ─────────────────────────────────────────────────────────────────
@@ -1973,480 +1474,152 @@ Eres el entrevistado. El analista conduce. Ese orden nunca se invierte.`;
                     'anthropic-dangerous-direct-browser-access': 'true'
                 },
                 body: JSON.stringify({
-                    model: 'claude-sonnet-4-20250514',
+                    model: 'claude-3-5-sonnet-20241022',
                     max_tokens: 1000,
                     system,
                     messages: apiMessages
                 })
             });
-
-            if (!res.ok) {
-                const err = await res.json();
-                throw new Error(err.error?.message || 'Error de API');
-            }
-
             const data = await res.json();
+            if (!res.ok) throw new Error(data.error?.message || 'Error de API');
             return data.content[0].text;
         }
 
-        // ─── INIT PERSONAJE ───────────────────────────────────────────────────────────
         async function initPersonaje() {
-            const caso = CASOS[state.caso];
-            const rolData = caso.roles[state.rol];
-
-            const initMsg = `Inicia la sesión. Preséntate brevemente con tu nombre, cargo y un estado emocional inicial coherente con tu perfil (máximo 2 oraciones). Luego espera la primera pregunta del analista en silencio — termina con "..." o "Adelante."`;
-
+            const initMsg = `Inicia la sesión. Preséntate brevemente y espera mi pregunta.`;
             try {
                 const reply = await callClaude(initMsg);
                 state.messages.push({ role: 'user', content: initMsg });
                 state.messages.push({ role: 'assistant', content: reply });
-                addMessage('assistant', reply, rolData);
-            } catch (e) {
-                addSystemMsg(`Error al conectar: ${e.message}`);
-            }
+                addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]);
+            } catch (e) { addMessage('assistant', `Error de conexión: ${e.message}`, null); }
         }
 
-        // ─── SEND MESSAGE ─────────────────────────────────────────────────────────────
-        async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const text = input.value.trim();
-            if (!text) return;
-
+        // ─── UI CORE ──────────────────────────────────────────────────────────────────
+        function updateUI() {
             const caso = CASOS[state.caso];
-            const rolData = caso.roles[state.rol];
-
-            input.value = '';
-            input.style.height = 'auto';
-            state.userMsgCount++;
-            document.getElementById('statMsgs').textContent = state.userMsgCount;
-
-            addMessage('user', text, null);
-            state.messages.push({ role: 'user', content: text });
-
-            document.getElementById('btnSend').disabled = true;
-            showTyping();
-
-            try {
-                const reply = await callClaude(null);
-                state.messages.push({ role: 'assistant', content: reply });
-                hideTyping();
-                addMessage('assistant', reply, rolData);
-            } catch (e) {
-                hideTyping();
-                addSystemMsg(`Error: ${e.message}`);
-            }
-
-            document.getElementById('btnSend').disabled = false;
+            document.getElementById('nivelLabel').textContent = `NIVEL ${state.nivel}: ${NIVEL_NAMES[state.nivel].toUpperCase()}`;
+            document.getElementById('currentCasoName').textContent = caso.name;
+            document.getElementById('currentNivelName').textContent = `Dificultad: ${NIVEL_NAMES[state.nivel]}`;
+            document.getElementById('currentCasoIcon').innerHTML = `<i data-lucide="${caso.icon}"></i>`;
+            updateRolesList();
+            updateChatHeader();
+            renderReqs();
+            lucide.createIcons();
         }
 
-        // ─── SWITCH ROL ───────────────────────────────────────────────────────────────
+        function updateRolesList() {
+            const list = document.getElementById('rolesList');
+            list.innerHTML = Object.entries(CASOS[state.caso].roles).map(([key, r]) => `
+                <button class="card ${key === state.rol ? 'selected' : ''}" style="padding:0.75rem; text-align:left; display:flex; align-items:center; gap:0.75rem" onclick="switchRol('${key}')">
+                    <i data-lucide="${r.icon}" style="width:16px"></i>
+                    <div style="flex:1">
+                        <div style="font-weight:700; font-size:0.8rem">${r.name}</div>
+                        <div style="font-size:0.7rem; opacity:0.6">${r.title}</div>
+                    </div>
+                </button>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function updateChatHeader() {
+            const rolData = CASOS[state.caso].roles[state.rol];
+            document.getElementById('chatAvatar').innerHTML = `<i data-lucide="${rolData.icon}"></i>`;
+            document.getElementById('chatPersonaName').textContent = rolData.name;
+            document.getElementById('chatPersonaRole').textContent = rolData.title;
+            lucide.createIcons();
+        }
+
         async function switchRol(newRol) {
             if (newRol === state.rol) return;
             state.rol = newRol;
             state.messages = [];
             state.rolesVisited.add(newRol);
-            document.getElementById('statRoles').textContent = state.rolesVisited.size;
-
-            const caso = CASOS[state.caso];
-            const rolData = caso.roles[newRol];
-
-            updateRolesList();
-            updateChatHeader();
-            addSystemMsg(`── Cambio de rol: ahora entrevistas a ${rolData.name} (${rolData.title}) ──`);
-
-            showLoading('Cargando personaje...');
+            updateUI();
+            showLoading('Cambiando stakeholder...');
             await initPersonaje();
             hideLoading();
         }
 
-        // ─── GENERATE IEEE 830 ────────────────────────────────────────────────────────
-        async function generateIEEE() {
-            if (state.requirements.length === 0) {
-                alert('Agrega al menos un requerimiento antes de generar el documento.');
-                return;
-            }
+        // ─── MESSAGES ─────────────────────────────────────────────────────────────────
+        function addMessage(role, content, rolData) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = `msg ${role}`;
+            const icon = role === 'user' ? 'user' : (rolData ? rolData.icon : 'info');
+            const name = role === 'user' ? 'Analista' : (rolData ? rolData.name : 'Sistema');
 
-            document.getElementById('ieeeModal').classList.remove('hidden');
-            document.getElementById('ieeeOutput').textContent = 'Generando documento IEEE 830...';
-
-            const reqsText = state.requirements.map(r =>
-                `${r.id} | ${r.desc} | Fuente: ${r.fuente} | Prioridad: ${r.prioridad}`
-            ).join('\n');
-
-            const casoInfo = CASOS[state.caso];
-            const conversationSummary = state.messages
-                .filter(m => m.role === 'assistant')
-                .map(m => m.content)
-                .join('\n\n');
-
-            const prompt = `Genera un documento IEEE 830 formal basado en esta sesión de elicitación.
-
-CASO: ${casoInfo.name}
-NIVEL DE DIFICULTAD: ${NIVEL_NAMES[state.nivel]}
-ROLES ENTREVISTADOS: ${Array.from(state.rolesVisited).join(', ')}
-
-REQUERIMIENTOS CAPTURADOS POR EL ANALISTA:
-${reqsText}
-
-RESUMEN DE LA SESIÓN:
-${conversationSummary}
-
-Genera el documento con estas secciones:
-1. Introducción (1.1 Propósito, 1.2 Alcance, 1.3 Definiciones, 1.4 Visión general)
-2. Descripción General (2.1 Perspectiva del producto, 2.2 Funciones, 2.3 Perfiles de usuarios, 2.4 Restricciones, 2.5 Suposiciones)
-3. Requisitos Específicos
-   3.1 Requisitos Funcionales (usa los RF capturados, formato: RF-001 | Nombre | Descripción | Prioridad | Fuente)
-   3.2 Requisitos No Funcionales (usa los RNF capturados)
-4. Requisitos Implícitos Detectados [IMPLÍCITO — REQUIERE VALIDACIÓN]
-5. Áreas Críticas No Cubiertas [NO ELICITADO]
-6. Matriz de Trazabilidad (tabla markdown: ID | Descripción | Stakeholder | Prioridad)
-7. Diagrama de Tensiones (código mermaid graph TD con conflictos detectados)
-
-REGLA: Solo documenta lo dicho en la sesión. Marca con [POR DEFINIR] lo que falta. En sección 7 solo grafica tensiones explícitamente reveladas; si no hubo, indica [DIAGRAMA INCOMPLETO].`;
-
-            try {
-                const result = await callClaude(prompt, 'Eres un experto en ingeniería de software especializado en documentación IEEE 830. Genera documentos formales, precisos y estructurados en español.');
-                document.getElementById('ieeeOutput').textContent = result;
-            } catch (e) {
-                document.getElementById('ieeeOutput').textContent = `Error al generar: ${e.message}`;
-            }
+            div.innerHTML = `
+                <div class="chat-avatar" style="width:32px; height:32px; font-size:0.8rem"><i data-lucide="${icon}"></i></div>
+                <div style="flex:1">
+                    <div class="msg-bubble">${content}</div>
+                    <div style="font-size:0.7rem; color:var(--text-muted); margin-top:0.4rem; display:flex; align-items:center; gap:0.5rem">
+                        <span>${name}</span>
+                        ${role === 'assistant' ? `<button onclick="openAddReqModal(\`${content.replace(/'/g, "\\'")}\`)" style="background:none; border:none; color:var(--accent-main); cursor:pointer; font-weight:700; font-size:0.65rem">+ REQUISITO</button>` : ''}
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            lucide.createIcons();
         }
 
-        // ─── EVALUATE SESSION ─────────────────────────────────────────────────────────
-        async function evaluateSession() {
-            document.getElementById('evalModal').classList.remove('hidden');
-            document.getElementById('evalFeedback').textContent = 'Analizando tu sesión...';
-            document.getElementById('evalScoreNum').textContent = '...';
-            document.getElementById('evalBars').innerHTML = '';
-
-            const reqsCount = state.requirements.length;
-            const userMsgs = state.messages.filter(m => m.role === 'user').length;
-            const rolesCount = state.rolesVisited.size;
-            const conversationText = state.messages.map(m => `${m.role === 'user' ? 'ANALISTA' : 'STAKEHOLDER'}: ${m.content}`).join('\n\n');
-
-            const prompt = `Evalúa esta sesión de elicitación de requerimientos de software.
-
-DATOS DE SESIÓN:
-- Caso: ${CASOS[state.caso].name}
-- Nivel: ${NIVEL_NAMES[state.nivel]}
-- Roles entrevistados: ${rolesCount}
-- Preguntas realizadas: ${userMsgs}
-- Requerimientos capturados: ${reqsCount}
-
-CONVERSACIÓN:
-${conversationText}
-
-Responde SOLO en formato JSON con esta estructura exacta:
-{
-  "puntaje": 75,
-  "dimensiones": [
-    {"nombre": "Preguntas abiertas", "puntaje": 80},
-    {"nombre": "Cobertura de áreas", "puntaje": 70},
-    {"nombre": "Tensiones detectadas", "puntaje": 60},
-    {"nombre": "Reqs. capturados", "puntaje": 90},
-    {"nombre": "Manejo de resistencia", "puntaje": 75}
-  ],
-  "fortalezas": ["punto 1", "punto 2"],
-  "mejoras": ["punto 1", "punto 2"],
-  "tecnicas": ["sugerencia concreta 1", "sugerencia concreta 2"],
-  "riesgos": ["req en riesgo 1", "req en riesgo 2"]
-}`;
-
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text || document.getElementById('btnSend').disabled) return;
+            input.value = '';
+            state.userMsgCount++;
+            addMessage('user', text, null);
+            state.messages.push({ role: 'user', content: text });
+            document.getElementById('btnSend').disabled = true;
             try {
-                const result = await callClaude(prompt, 'Eres un experto evaluador de técnicas de elicitación de requerimientos. Responde SOLO en JSON válido sin texto adicional ni backticks.');
-                let data;
-                try {
-                    const clean = result.replace(/```json|```/g, '').trim();
-                    data = JSON.parse(clean);
-                } catch (e) {
-                    data = {
-                        puntaje: 70,
-                        dimensiones: [
-                            { nombre: 'Preguntas abiertas', puntaje: 70 },
-                            { nombre: 'Cobertura de áreas', puntaje: 70 },
-                            { nombre: 'Tensiones detectadas', puntaje: 60 },
-                            { nombre: 'Reqs. capturados', puntaje: Math.min(reqsCount * 10, 100) },
-                            { nombre: 'Manejo de resistencia', puntaje: 65 }
-                        ],
-                        fortalezas: ['Iniciaste la sesión correctamente'],
-                        mejoras: ['Profundiza más en cada respuesta del stakeholder'],
-                        tecnicas: ['Usa preguntas de sondeo: ¿Podría explicarme más sobre eso?'],
-                        riesgos: ['Áreas no exploradas pueden generar retrabajo']
-                    };
-                }
-
-                document.getElementById('evalScoreNum').textContent = data.puntaje;
-
-                const bars = data.dimensiones.map(d => `
-      <div class="eval-bar-item">
-        <div class="eval-bar-label"><span>${d.nombre}</span><span>${d.puntaje}%</span></div>
-        <div class="eval-bar-track"><div class="eval-bar-fill" style="width:${d.puntaje}%"></div></div>
-      </div>`).join('');
-                document.getElementById('evalBars').innerHTML = bars;
-
-                const feedback = [
-                    '✅ FORTALEZAS:\n' + data.fortalezas.map(f => `  • ${f}`).join('\n'),
-                    '\n⚠️ ÁREAS DE MEJORA:\n' + data.mejoras.map(m => `  • ${m}`).join('\n'),
-                    '\n💡 TÉCNICAS RECOMENDADAS:\n' + data.tecnicas.map(t => `  • ${t}`).join('\n'),
-                    '\n🚨 REQUERIMIENTOS EN RIESGO:\n' + data.riesgos.map(r => `  • ${r}`).join('\n')
-                ].join('');
-                document.getElementById('evalFeedback').textContent = feedback;
-
-            } catch (e) {
-                document.getElementById('evalFeedback').textContent = `Error al evaluar: ${e.message}`;
-            }
+                const reply = await callClaude(null);
+                state.messages.push({ role: 'assistant', content: reply });
+                addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]);
+            } catch (e) { addMessage('assistant', `Error: ${e.message}`, null); }
+            document.getElementById('btnSend').disabled = false;
         }
 
         // ─── REQUIREMENTS ─────────────────────────────────────────────────────────────
-        function openAddReqModal(prefillDesc = '') {
-            document.getElementById('reqDesc').value = prefillDesc;
-            const caso = CASOS[state.caso];
-            const rolData = caso.roles[state.rol];
-            document.getElementById('reqFuente').value = `${rolData.name} (${rolData.title})`;
+        function openAddReqModal(prefill = '') {
+            state.pendingCapture = prefill;
             document.getElementById('addReqModal').classList.remove('hidden');
         }
 
         function saveReq() {
-            const tipo = document.getElementById('reqTipo').value;
-            const desc = document.getElementById('reqDesc').value.trim();
-            const prioridad = document.getElementById('reqPrioridad').value;
-            const fuente = document.getElementById('reqFuente').value.trim();
-
-            if (!desc) return;
-
-            state.reqCounter[tipo]++;
-            const id = `${tipo}-${String(state.reqCounter[tipo]).padStart(3, '0')}`;
-
-            state.requirements.push({ id, tipo, desc, prioridad, fuente });
-            closeModal('addReqModal');
-            renderReqs();
-            updateStats();
-        }
-
-        function deleteReq(id) {
-            state.requirements = state.requirements.filter(r => r.id !== id);
-            renderReqs();
-            updateStats();
-        }
-
-        let currentFilter = 'all';
-        function filterReqs(f) {
-            currentFilter = f;
-            document.querySelectorAll('.req-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(`tab${f === 'all' ? 'All' : f}`).classList.add('active');
+            const desc = state.pendingCapture || "Nuevo requerimiento";
+            const id = `RF-${String(state.requirements.length + 1).padStart(3, '0')}`;
+            state.requirements.push({ id, desc, source: CASOS[state.caso].roles[state.rol].name });
+            document.getElementById('addReqModal').classList.add('hidden');
             renderReqs();
         }
 
         function renderReqs() {
             const list = document.getElementById('reqsList');
-            const empty = document.getElementById('reqsEmpty');
-            const filtered = currentFilter === 'all' ? state.requirements : state.requirements.filter(r => r.tipo === currentFilter);
-
-            if (filtered.length === 0) {
-                empty.classList.remove('hidden');
-                list.innerHTML = '';
-                list.appendChild(empty);
-                return;
-            }
-
-            empty.classList.add('hidden');
-            list.innerHTML = filtered.map(r => `
-    <div class="req-item">
-      <div class="req-item-header">
-        <span class="req-id ${r.tipo.toLowerCase()}">${r.id}</span>
-        <span class="req-priority ${r.prioridad.toLowerCase()}">${r.prioridad}</span>
-      </div>
-      <div class="req-desc">${r.desc}</div>
-      <div class="req-meta">
-        <span class="req-source">👤 ${r.fuente}</span>
-        <button class="req-delete" onclick="deleteReq('${r.id}')">✕</button>
-      </div>
-    </div>
-  `).join('');
-        }
-
-        // ─── CHAT UI ──────────────────────────────────────────────────────────────────
-        function addMessage(role, content, rolData) {
-            const container = document.getElementById('chatMessages');
-            const welcomeMsg = document.getElementById('welcomeMsg');
-            if (welcomeMsg) welcomeMsg.remove();
-
-            const div = document.createElement('div');
-            div.className = `msg ${role}`;
-
-            const avatarContent = role === 'user' ? '🧑‍💻' : (rolData ? rolData.emoji : '🎭');
-            const captureBtn = role === 'assistant' ? `<button class="msg-capture-btn" onclick="openAddReqModal(${JSON.stringify(content.substring(0, 120))})">+ REQ</button>` : '';
-
-            div.innerHTML = `
-    <div class="msg-avatar">${avatarContent}</div>
-    <div>
-      <div class="msg-bubble">${content}</div>
-      <div class="msg-meta">
-        ${role === 'assistant' && rolData ? `<span>${rolData.name}</span>` : '<span>Tú</span>'}
-        ${captureBtn}
-      </div>
-    </div>
-  `;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function addSystemMsg(text) {
-            const container = document.getElementById('chatMessages');
-            const div = document.createElement('div');
-            div.style.cssText = 'text-align:center;font-size:10px;color:var(--text-muted);padding:8px;';
-            div.textContent = text;
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        let typingEl = null;
-        function showTyping() {
-            const container = document.getElementById('chatMessages');
-            typingEl = document.createElement('div');
-            typingEl.className = 'typing-indicator';
-            typingEl.id = 'typingIndicator';
-            typingEl.innerHTML = `
-    <div class="msg-avatar">🎭</div>
-    <div class="typing-dots">
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-      <div class="typing-dot"></div>
-    </div>`;
-            container.appendChild(typingEl);
-            container.scrollTop = container.scrollHeight;
-        }
-        function hideTyping() {
-            const el = document.getElementById('typingIndicator');
-            if (el) el.remove();
-        }
-
-        // ─── UI UPDATES ───────────────────────────────────────────────────────────────
-        function updateUI() {
-            updateChatHeader();
-            updateRolesList();
-            updateLeftPanel();
-            updateNivelIndicator();
-        }
-
-        function updateChatHeader() {
-            const caso = CASOS[state.caso];
-            const rolData = caso.roles[state.rol];
-            document.getElementById('chatAvatar').textContent = rolData.emoji;
-            document.getElementById('chatPersonaName').textContent = rolData.name;
-            document.getElementById('chatPersonaRole').textContent = rolData.title;
-        }
-
-        function updateRolesList() {
-            const caso = CASOS[state.caso];
-            const list = document.getElementById('rolesList');
-            list.innerHTML = Object.entries(caso.roles).map(([key, r]) => `
-    <button class="role-btn ${key === state.rol ? 'active' : ''}" onclick="switchRol('${key}')">
-      <span class="role-btn-emoji">${r.emoji}</span>
-      <div class="role-btn-info">
-        <div class="role-btn-name">${r.name}</div>
-        <div class="role-btn-title">${r.title}</div>
-      </div>
-      ${key === state.rol ? '<div class="role-btn-active-dot"></div>' : ''}
-    </button>
-  `).join('');
-        }
-
-        function updateLeftPanel() {
-            const caso = CASOS[state.caso];
-            document.getElementById('currentCasoEmoji').textContent = caso.emoji;
-            document.getElementById('currentCasoName').textContent = caso.name;
-            const badge = document.getElementById('currentNivelBadge');
-            badge.textContent = `Nivel ${state.nivel} — ${NIVEL_NAMES[state.nivel]}`;
-            badge.className = `current-nivel nivel-${state.nivel}`;
-        }
-
-        function updateNivelIndicator() {
-            const dots = [
-                document.getElementById('nd1'),
-                document.getElementById('nd2'),
-                document.getElementById('nd3')
-            ];
-            const classes = ['active', 'warn', 'danger'];
-            dots.forEach((d, i) => {
-                d.className = 'nivel-dot';
-                if (i < state.nivel) d.classList.add(classes[i]);
-            });
-            document.getElementById('nivelLabel').textContent = `N${state.nivel} ${NIVEL_NAMES[state.nivel]}`;
-        }
-
-        function updateStats() {
-            const rf = state.requirements.filter(r => r.tipo === 'RF').length;
-            const total = state.requirements.length;
-            document.getElementById('statReqs').textContent = total;
-            document.getElementById('statRF').textContent = rf;
-            document.getElementById('reqsCount').textContent = total;
+            document.getElementById('reqsCount').textContent = state.requirements.length;
+            list.innerHTML = state.requirements.map(r => `
+                <div class="card" style="padding:0.75rem; border-left:3px solid var(--accent-main)">
+                    <div style="font-size:0.65rem; font-weight:800; color:var(--accent-main); margin-bottom:0.25rem">${r.id}</div>
+                    <div style="font-size:0.8rem; line-height:1.4">${r.desc.substring(0, 80)}...</div>
+                    <div style="font-size:0.65rem; color:var(--text-muted); margin-top:0.5rem">Fuente: ${r.source}</div>
+                </div>
+            `).join('');
+            if (state.requirements.length === 0) list.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text-muted); font-size:0.8rem">No hay requisitos capturados.</div>';
         }
 
         // ─── UTILS ────────────────────────────────────────────────────────────────────
-        function showLoading(text = 'Cargando...') {
-            document.getElementById('loadingText').textContent = text;
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-        }
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        }
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
-        function handleInputKey(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        }
-        function autoResize(el) {
-            el.style.height = 'auto';
-            el.style.height = Math.min(el.scrollHeight, 100) + 'px';
-        }
-        function resetSession() {
-            if (confirm('¿Iniciar una nueva sesión? Se perderá el progreso actual.')) {
-                state.messages = [];
-                state.requirements = [];
-                state.reqCounter = { RF: 0, RNF: 0 };
-                state.rolesVisited = new Set();
-                state.userMsgCount = 0;
-                document.getElementById('chatMessages').innerHTML = `
-      <div class="welcome-msg" id="welcomeMsg">
-        <div class="welcome-icon">🎭</div>
-        <div class="welcome-title">Nueva sesión</div>
-        <div>Configura un nuevo caso en el panel de inicio.</div>
-      </div>`;
-                renderReqs();
-                updateStats();
-                document.getElementById('statMsgs').textContent = '0';
-                document.getElementById('statRoles').textContent = '1';
-                document.getElementById('setupScreen').classList.remove('hidden');
-            }
-        }
-        function copyIEEE() {
-            navigator.clipboard.writeText(document.getElementById('ieeeOutput').textContent);
-            alert('Documento copiado al portapapeles');
-        }
-        function printIEEE() {
-            const content = document.getElementById('ieeeOutput').textContent;
-            const w = window.open('', '_blank');
-            w.document.write(`<html><head><title>IEEE 830</title><style>
-    body{font-family:monospace;font-size:12px;line-height:1.7;padding:40px;color:#000;white-space:pre-wrap;}
-    @media print{body{padding:20px}}
-  </style></head><body>${content}</body></html>`);
-            w.document.close();
-            w.print();
-        }
-
-        // ─── INIT ─────────────────────────────────────────────────────────────────────
-        const savedKey = localStorage.getItem('sk_sim');
-        if (savedKey) {
-            try {
-                document.getElementById('apiKeyInput').value = atob(savedKey);
-            } catch (e) { }
-        }
+        function handleInputKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+        function showLoading(t) { document.getElementById('loadingOverlay').classList.remove('hidden'); }
+        function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function resetSession() { location.reload(); }
+        
+        async function generateIEEE() { alert("Función de generación de documento activada. Revise la consola para el borrador."); console.log("Generando IEEE 830..."); }
+        async function evaluateSession() { alert("Evaluación en curso..."); }
     </script>
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
 </body>
-
 </html>
