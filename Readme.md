@@ -1,4 +1,4 @@
-# 🎭 StakeFlow — Elevando la Elicitación de Requerimientos
+# StakeFlow — Elevando la Elicitación de Requerimientos
 
 ### Entrena tu capacidad de análisis con stakeholders simulados por IA de alta fidelidad.
 
@@ -8,7 +8,7 @@
 
 ---
 
-## 💡 La Visión detrás de StakeFlow
+## La Visión detrás de StakeFlow
 
 En el mundo real del desarrollo de software, los requerimientos no vienen en una lista perfecta; vienen de personas con emociones, sesgos y agendas ocultas. **StakeFlow** es una herramienta de grado industrial diseñada para cerrar la brecha entre la teoría académica y la práctica profesional.
 
@@ -16,7 +16,7 @@ Ya no necesitas esperar a un proyecto real para enfrentarte a un cliente difíci
 
 ---
 
-## 🔥 Innovaciones en la Versión 4.0
+## Innovaciones en la Versión 4.0
 
 Hemos evolucionado el núcleo de la aplicación para ofrecer una experiencia más robusta y sofisticada:
 
@@ -29,7 +29,7 @@ Hemos evolucionado el núcleo de la aplicación para ofrecer una experiencia má
 
 ---
 
-## 🏗️ Escenarios de Entrenamiento
+## Escenarios de Entrenamiento
 
 | Sector | El Desafío | Perfiles Clave |
 |:---:|:---|:---|
@@ -40,7 +40,7 @@ Hemos evolucionado el núcleo de la aplicación para ofrecer una experiencia má
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
 - **IA:** Anthropic Claude API (Claude 3.5 Sonnet).
 - **UI:** Sistema de diseño **Zinc Dark** + Glassmorphism.
@@ -49,7 +49,7 @@ Hemos evolucionado el núcleo de la aplicación para ofrecer una experiencia má
 
 ---
 
-## 🚀 Cómo empezar en 30 segundos
+## Cómo empezar en 30 segundos
 
 1. **Obtén tu Clave:** Genera una API Key en la [Consola de Anthropic](https://console.anthropic.com/).
 2. **Ejecuta:** Abre `index.html` en tu navegador.
@@ -57,7 +57,7 @@ Hemos evolucionado el núcleo de la aplicación para ofrecer una experiencia má
 
 ---
 
-## 📈 Ciclo Profesional de Elicitación
+## Ciclo Profesional de Elicitación
 
 1. **Entrevista:** Detecta inconsistencias, miedos y necesidades reales del stakeholder.
 2. **Captura:** Documenta requerimientos funcionales al instante desde el chat.
@@ -66,4 +66,4 @@ Hemos evolucionado el núcleo de la aplicación para ofrecer una experiencia má
 
 ---
 
-Desarrollado para la próxima generación de Ingenieros de Software. 🚀
+Desarrollado para la próxima generación de Ingenieros de Software.
