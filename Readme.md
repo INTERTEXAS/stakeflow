@@ -20,7 +20,8 @@ Ya no necesitas esperar a un proyecto real para enfrentarte a un cliente difíci
 
 Hemos evolucionado el núcleo de la aplicación para ofrecer una experiencia más robusta y sofisticada:
 
-- **Cerebro Claude:** Migración total a la API de Anthropic Claude (Sonnet 3.5). Obtén matices psicológicos superiores y un seguimiento de instrucciones mucho más preciso.
+- **Cerebro Claude:** Migración total a la API de Anthropic Claude (Siguiente Generación). Obtén matices psicológicos superiores y un seguimiento de instrucciones mucho más preciso.
+- **Asistente de Configuración:** Nuevo proceso guiado en 4 pasos (Bienvenida, Conexión, Escenario y Nivel) para una inmersión total sin fricciones.
 - **Favicon Temático:** Integración de identidad visual propia mediante iconografía vectorial.
 - **Diseño de Vanguardia (Zinc 2.0):** Refinamiento de la interfaz con **Glassmorphism** y una experiencia de usuario optimizada para sesiones largas.
 - **Personalidades Profundas:** Stakeholders con perfiles psicológicos únicos que reaccionan a tu tono, evaden preguntas incómodas o exigen mayor claridad técnica según el nivel.

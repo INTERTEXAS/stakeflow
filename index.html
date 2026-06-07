@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StakeFlow — Simulador de Stakeholders</title>
     <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect width='8' height='8' x='3' y='3' rx='2'/><path d='M7 11v4a2 2 0 0 0 2 2h4'/><rect width='8' height='8' x='13' y='13' rx='2'/></svg>">
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2310b981'/><path d='M25 35h50M25 50h35M25 65h42' stroke='%23000' stroke-width='9' stroke-linecap='round'/><circle cx='72' cy='62' r='13' fill='%23000'/><path d='M67 62l4 4 7-7' stroke='%2310b981' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>" />
     <link
         href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap"
         rel="stylesheet">
@@ -481,18 +481,56 @@
             }
         }
 
-        @keyframes success-pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.3); background: #ffffff; color: #10b981; }
-            100% { transform: scale(1); }
+        .setup-step {
+            width: 100%;
         }
-        .success-pulse { animation: success-pulse 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
 
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
+        .setup-step.hidden {
+            display: none;
         }
-        .req-card-anim { animation: slideInRight 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--border-highlight);
+            transition: all 0.3s;
+        }
+
+        .progress-dot.active {
+            background: var(--accent-main);
+            box-shadow: 0 0 10px var(--accent-main);
+            width: 24px;
+            border-radius: 4px;
+        }
+
+        .loading-msg {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+            font-style: italic;
+            text-align: center;
+            min-height: 1.5rem;
+        }
+
+        .char-counter {
+            font-size: 0.7rem;
+            text-align: right;
+            margin-top: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .char-counter.warn {
+            color: #fbbf24;
+        }
+
+        .char-counter.danger {
+            color: #f87171;
+        }
+
+        .char-counter.ok {
+            color: var(--text-muted);
+        }
 
         @media (max-width: 1024px) {
 
@@ -531,46 +569,215 @@
 
 <body>
     <div class="setup-screen" id="setupScreen">
-        <div class="setup-container">
-            <div class="setup-header">
-                <div class="setup-icon"><i data-lucide="sparkles"></i></div>
-                <h1 class="setup-title">StakeFlow</h1>
-                <p class="setup-subtitle">Impulsado por Anthropic Claude API</p>
-            </div>
-            <div class="setup-section">
-                <label class="panel-label">Anthropic API Key</label>
-                <input type="password" class="chat-input" id="apiKeyInput" placeholder="sk-ant-api03-..."
-                    style="width:100%; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary)"
-                    oninput="checkSetupReady()" />
-                <p class="api-note">
-                    Obtén tu API Key en <a href="https://console.anthropic.com/"
-                        target="_blank">console.anthropic.com</a>
-                    &nbsp;·&nbsp; Tu key se guarda solo en tu navegador 🔒
-                </p>
-            </div>
-            <div class="setup-section">
-                <label class="panel-label">Caso de Estudio</label>
-                <div class="casos-grid" id="casosGrid"></div>
-            </div>
-            <div class="setup-section">
-                <label class="panel-label">Nivel de Desafío</label>
-                <div class="niveles-grid">
-                    <div class="card" onclick="selectNivel(1)" id="nivel-1">
-                        <div class="card-title">Cooperativo</div>
-                        <div class="card-desc">Respuestas fluidas.</div>
-                    </div>
-                    <div class="card" onclick="selectNivel(2)" id="nivel-2">
-                        <div class="card-title">Realista</div>
-                        <div class="card-desc">Resistencia natural.</div>
-                    </div>
-                    <div class="card" onclick="selectNivel(3)" id="nivel-3">
-                        <div class="card-title">Adversarial</div>
-                        <div class="card-desc">Agendas ocultas.</div>
+        <div class="setup-container" id="setupContainer">
+
+            <!-- PASO 0: BIENVENIDA -->
+            <div id="step-0" class="setup-step">
+                <div class="setup-header">
+                    <div class="setup-icon"><i data-lucide="sparkles"></i></div>
+                    <h1 class="setup-title">StakeFlow</h1>
+                    <p class="setup-subtitle">Simulador profesional de entrevistas de requerimientos</p>
+                </div>
+                <div
+                    style="background:var(--bg-tertiary); border:1px solid var(--border-highlight); border-radius:var(--radius-lg); padding:1.5rem; margin-bottom:1.5rem">
+                    <div
+                        style="font-size:0.8rem; font-weight:800; color:var(--accent-main); letter-spacing:0.05em; margin-bottom:1rem">
+                        ¿QUÉ ES STAKEFLOW?</div>
+                    <p style="font-size:0.85rem; color:var(--text-secondary); line-height:1.7; margin-bottom:1rem">
+                        StakeFlow simula entrevistas reales con stakeholders de proyectos de software. Tú eres el
+                        <strong style="color:#fff">Analista de Requerimientos</strong> y la IA encarna al personaje que
+                        elijas.
+                    </p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem">
+                        <div
+                            style="background:var(--bg-secondary); border-radius:var(--radius); padding:0.85rem; border:1px solid var(--border)">
+                            <div style="margin-bottom:0.4rem; color:var(--accent-main)"><i data-lucide="users"
+                                    style="width:20px;height:20px"></i></div>
+                            <div style="font-size:0.78rem; font-weight:700; color:#fff; margin-bottom:0.3rem">3 roles
+                                por caso</div>
+                            <div style="font-size:0.72rem; color:var(--text-muted)">Sponsor, Cliente y Usuario Final con
+                                personalidades únicas</div>
+                        </div>
+                        <div
+                            style="background:var(--bg-secondary); border-radius:var(--radius); padding:0.85rem; border:1px solid var(--border)">
+                            <div style="margin-bottom:0.4rem; color:var(--accent-main)"><i data-lucide="clipboard-list"
+                                    style="width:20px;height:20px"></i></div>
+                            <div style="font-size:0.78rem; font-weight:700; color:#fff; margin-bottom:0.3rem">Captura en
+                                tiempo real</div>
+                            <div style="font-size:0.72rem; color:var(--text-muted)">Registra requerimientos mientras
+                                entrevistas</div>
+                        </div>
+                        <div
+                            style="background:var(--bg-secondary); border-radius:var(--radius); padding:0.85rem; border:1px solid var(--border)">
+                            <div style="margin-bottom:0.4rem; color:var(--accent-main)"><i data-lucide="file-text"
+                                    style="width:20px;height:20px"></i></div>
+                            <div style="font-size:0.78rem; font-weight:700; color:#fff; margin-bottom:0.3rem">Genera
+                                IEEE 830</div>
+                            <div style="font-size:0.72rem; color:var(--text-muted)">Documento formal al finalizar la
+                                sesión</div>
+                        </div>
+                        <div
+                            style="background:var(--bg-secondary); border-radius:var(--radius); padding:0.85rem; border:1px solid var(--border)">
+                            <div style="margin-bottom:0.4rem; color:var(--accent-main)"><i data-lucide="bar-chart-2"
+                                    style="width:20px;height:20px"></i></div>
+                            <div style="font-size:0.78rem; font-weight:700; color:#fff; margin-bottom:0.3rem">Evaluación
+                                con IA</div>
+                            <div style="font-size:0.72rem; color:var(--text-muted)">Recibe feedback de tu desempeño como
+                                analista</div>
+                        </div>
                     </div>
                 </div>
+                <div
+                    style="background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius); padding:1rem; margin-bottom:1.5rem; font-size:0.8rem; color:var(--text-secondary); line-height:1.6">
+                    <i data-lucide="lightbulb"
+                        style="width:16px;height:16px;vertical-align:middle;color:var(--accent-main)"></i> <strong
+                        style="color:#fff">¿Cómo se usa?</strong> Elige un caso de negocio, selecciona con qué
+                    stakeholder empezar y hazle preguntas como si fuera una entrevista real. Puedes cambiar de rol en
+                    cualquier momento para obtener perspectivas distintas.
+                </div>
+                <button class="btn-primary" style="width:100%" onclick="goStep(1)">Comenzar →</button>
             </div>
-            <button class="btn-primary" style="width:100%" id="btnStart" onclick="startSession()" disabled>Configurar
-                Entorno →</button>
+
+            <!-- PASO 1: API KEY -->
+            <div id="step-1" class="setup-step hidden">
+                <div class="setup-header">
+                    <div class="setup-icon"><i data-lucide="key-round"></i></div>
+                    <h1 class="setup-title" style="font-size:1.6rem">Conectar con Claude</h1>
+                    <p class="setup-subtitle">Necesitas una API Key de Anthropic para que la IA pueda simular los
+                        personajes</p>
+                </div>
+                <div class="setup-section">
+                    <label class="panel-label">Tu API Key de Anthropic</label>
+                    <div style="position:relative">
+                        <input type="password" class="chat-input" id="apiKeyInput" placeholder="sk-ant-api03-..."
+                            style="width:100%; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-tertiary); padding-right:3rem"
+                            oninput="checkStep1Ready()" />
+                        <button onclick="toggleKeyVisibility()"
+                            style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--text-muted); cursor:pointer"><i
+                                data-lucide="eye" style="width:16px;height:16px"></i></button>
+                    </div>
+                    <p class="api-note" style="margin-top:0.75rem">
+                        Obtén tu key gratis en <a href="https://console.anthropic.com/"
+                            target="_blank">console.anthropic.com</a>
+                        &nbsp;·&nbsp; <i data-lucide="shield-check"
+                            style="width:12px;height:12px;vertical-align:middle"></i> Solo se guarda en tu navegador,
+                        nunca en servidores externos
+                    </p>
+                </div>
+                <div
+                    style="background:var(--bg-tertiary); border-radius:var(--radius); padding:1rem; margin-bottom:1.5rem; font-size:0.78rem; color:var(--text-muted); line-height:1.7">
+                    <div
+                        style="color:#fff; font-weight:700; margin-bottom:0.4rem; display:flex; align-items:center; gap:0.4rem">
+                        <i data-lucide="credit-card" style="width:14px;height:14px;color:var(--accent-main)"></i>
+                        ¿Cuánto cuesta?</div>
+                    Una sesión completa (3 roles + IEEE 830) cuesta aproximadamente <strong
+                        style="color:var(--accent-main)">$0.03 USD</strong>. Anthropic otorga $5 de crédito gratuito al
+                    registrarte.
+                </div>
+                <div style="display:flex; gap:0.75rem">
+                    <button onclick="goStep(0)"
+                        style="flex:1; padding:0.9rem; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:var(--radius); color:var(--text-secondary); cursor:pointer; font-family:var(--font-display); font-weight:700">←
+                        Atrás</button>
+                    <button id="btnStep1Next" class="btn-primary" style="flex:2" onclick="goStep(2)" disabled>Continuar
+                        →</button>
+                </div>
+            </div>
+
+            <!-- PASO 2: CASO DE ESTUDIO -->
+            <div id="step-2" class="setup-step hidden">
+                <div class="setup-header">
+                    <div class="setup-icon"><i data-lucide="building-2"></i></div>
+                    <h1 class="setup-title" style="font-size:1.6rem">Elige un Escenario</h1>
+                    <p class="setup-subtitle">Cada caso tiene su propio contexto de negocio, tensiones internas y
+                        stakeholders únicos</p>
+                </div>
+                <div class="setup-section">
+                    <div class="casos-grid" id="casosGrid"></div>
+                </div>
+                <div id="casoDesc"
+                    style="display:none; background:var(--bg-tertiary); border:1px solid var(--border-highlight); border-radius:var(--radius); padding:1rem; margin-bottom:1rem; font-size:0.8rem; color:var(--text-secondary); line-height:1.6">
+                </div>
+                <div style="display:flex; gap:0.75rem">
+                    <button onclick="goStep(1)"
+                        style="flex:1; padding:0.9rem; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:var(--radius); color:var(--text-secondary); cursor:pointer; font-family:var(--font-display); font-weight:700">←
+                        Atrás</button>
+                    <button id="btnStep2Next" class="btn-primary" style="flex:2" onclick="goStep(3)" disabled>Continuar
+                        →</button>
+                </div>
+            </div>
+
+            <!-- PASO 3: NIVEL DE DIFICULTAD -->
+            <div id="step-3" class="setup-step hidden">
+                <div class="setup-header">
+                    <div class="setup-icon"><i data-lucide="zap"></i></div>
+                    <h1 class="setup-title" style="font-size:1.6rem">Nivel de Desafío</h1>
+                    <p class="setup-subtitle">El nivel afecta qué tan cooperativo, evasivo o contradictorio será el
+                        personaje</p>
+                </div>
+                <div class="setup-section">
+                    <div style="display:grid; gap:0.75rem">
+                        <div class="card" onclick="selectNivelStep(1)" id="nivel-1"
+                            style="padding:1.1rem; cursor:pointer">
+                            <div style="display:flex; align-items:center; gap:0.75rem">
+                                <div
+                                    style="width:36px; height:36px; border-radius:8px; background:rgba(16,185,129,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#10b981">
+                                    <i data-lucide="shield-check" style="width:18px;height:18px"></i></div>
+                                <div>
+                                    <div class="card-title" style="margin-bottom:0.2rem">Nivel 1 — Cooperativo</div>
+                                    <div class="card-desc">El personaje responde con claridad. No oculta información si
+                                        se pregunta directamente. <strong style="color:#fff">Ideal para
+                                            principiantes.</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card" onclick="selectNivelStep(2)" id="nivel-2"
+                            style="padding:1.1rem; cursor:pointer">
+                            <div style="display:flex; align-items:center; gap:0.75rem">
+                                <div
+                                    style="width:36px; height:36px; border-radius:8px; background:rgba(251,191,36,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#fbbf24">
+                                    <i data-lucide="alert-triangle" style="width:18px;height:18px"></i></div>
+                                <div>
+                                    <div class="card-title" style="margin-bottom:0.2rem">Nivel 2 — Realista</div>
+                                    <div class="card-desc">El personaje tiene agenda propia, omite detalles y se resiste
+                                        a propuestas que afectan sus intereses. <strong style="color:#fff">Para
+                                            practicar de verdad.</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card" onclick="selectNivelStep(3)" id="nivel-3"
+                            style="padding:1.1rem; cursor:pointer">
+                            <div style="display:flex; align-items:center; gap:0.75rem">
+                                <div
+                                    style="width:36px; height:36px; border-radius:8px; background:rgba(239,68,68,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0; color:#ef4444">
+                                    <i data-lucide="flame" style="width:18px;height:18px"></i></div>
+                                <div>
+                                    <div class="card-title" style="margin-bottom:0.2rem">Nivel 3 — Adversarial</div>
+                                    <div class="card-desc">El personaje puede contradecirse, minimizar problemas y tener
+                                        conflictos no declarados. <strong style="color:#fff">Modo experto.</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex; gap:0.75rem">
+                    <button onclick="goStep(2)"
+                        style="flex:1; padding:0.9rem; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:var(--radius); color:var(--text-secondary); cursor:pointer; font-family:var(--font-display); font-weight:700">←
+                        Atrás</button>
+                    <button id="btnStep3Next" class="btn-primary" style="flex:2" onclick="startSession()" disabled><i
+                            data-lucide="play-circle"
+                            style="width:16px;height:16px;vertical-align:middle;margin-right:6px"></i>Iniciar
+                        Entrevista</button>
+                </div>
+            </div>
+
+            <!-- PROGRESS DOTS -->
+            <div id="progressDots" style="display:flex; justify-content:center; gap:0.5rem; margin-top:1.5rem">
+                <div class="progress-dot active" id="dot-0"></div>
+                <div class="progress-dot" id="dot-1"></div>
+                <div class="progress-dot" id="dot-2"></div>
+                <div class="progress-dot" id="dot-3"></div>
+            </div>
         </div>
     </div>
 
@@ -622,17 +829,16 @@
                     <button onclick="evaluateSession()" style="
                         display:flex; align-items:center; gap:0.75rem;
                         padding:0.85rem 1rem; border-radius:var(--radius);
-                        background:var(--accent-main); border:1px solid var(--accent-main);
-                        color:#000000; font-family:var(--font-display); font-size:0.85rem; font-weight:800;
-                        cursor:pointer; transition:all 0.2s; width:100%; text-align:left;
-                        box-shadow: 0 4px 12px -4px rgba(16, 185, 129, 0.4)">
-                        <i data-lucide="bar-chart-2" style="width:16px; color:#000; flex-shrink:0"></i>
+                        background:rgba(255,255,255,0.04); border:1px solid var(--border-highlight);
+                        color:#ffffff; font-family:var(--font-display); font-size:0.85rem; font-weight:700;
+                        cursor:pointer; transition:all 0.2s; width:100%; text-align:left">
+                        <i data-lucide="bar-chart-2" style="width:16px; color:#a1a1aa; flex-shrink:0"></i>
                         <span>Evaluar Sesión</span>
                     </button>
                     <button onclick="resetSession()" style="
                         display:flex; align-items:center; gap:0.75rem;
                         padding:0.85rem 1rem; border-radius:var(--radius);
-                        background:transparent; border:1px solid rgba(248,113,113,0.3);
+                        background:rgba(248,113,113,0.06); border:1px solid rgba(248,113,113,0.25);
                         color:#f87171; font-family:var(--font-display); font-size:0.85rem; font-weight:700;
                         cursor:pointer; transition:all 0.2s; width:100%; text-align:left">
                         <i data-lucide="power" style="width:16px; flex-shrink:0"></i>
@@ -660,10 +866,12 @@
             <div class="chat-messages" id="chatMessages"></div>
             <div class="chat-input-area">
                 <div class="chat-input-wrap">
-                    <textarea class="chat-input" id="chatInput" placeholder="Formular pregunta técnica..." rows="1"
-                        onkeydown="handleInputKey(event)"></textarea>
+                    <textarea class="chat-input" id="chatInput" placeholder="Escribe tu pregunta al stakeholder..."
+                        rows="1" onkeydown="handleInputKey(event)" oninput="updateCharCounter(this)"
+                        maxlength="500"></textarea>
                     <button class="btn-primary" id="btnSend" onclick="sendMessage()"><i data-lucide="send"></i></button>
                 </div>
+                <div class="char-counter ok" id="charCounter">0 / 500</div>
             </div>
         </div>
 
@@ -722,6 +930,7 @@
 
     <div class="loading-overlay hidden" id="loadingOverlay">
         <div class="spinner"></div>
+        <div class="loading-msg" id="loadingMsg">Procesando...</div>
     </div>
 
     <script>
@@ -734,35 +943,123 @@
         };
         const NIVEL_NAMES = { 1: 'Cooperativo', 2: 'Realista', 3: 'Adversarial' };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            renderCasosGrid();
-            const savedKey = localStorage.getItem('sk_sim_anthropic');
-            if (savedKey) try { document.getElementById('apiKeyInput').value = atob(savedKey); } catch (e) { }
-            lucide.createIcons();
-        });
+        // ── CASO DESCRIPTIONS ─────────────────────────────────────────────────────
+        const CASO_DESC = {
+            1: 'Una clínica privada de 12 años operando en papel. El Dr. Roberto aprobó el proyecto tras una multa. Laura quiere reportes. Carlos desconfía de los sistemas nuevos.',
+            2: 'Cadena de 3 restaurantes sin sistema POS adecuado. Martín quiere ROI rápido. Sofía coordina todo con WhatsApp. Diego sufrió con el sistema anterior.',
+            3: 'Universidad de 8,000 alumnos con un sistema de 15 años. La Dra. Elena quiere modernizar. Gómez teme perder sus datos. Ana pierde materias por errores del sistema.',
+            4: 'Gimnasio con fraudes de acceso y morosidad. Alejandro quiere automatizar y reducir personal. Valeria gestiona todo con 3 sistemas distintos. Lucas hace 40 check-ins en 15 minutos.'
+        };
+
+        // ── LOADING MESSAGES ──────────────────────────────────────────────────────
+        const LOADING_MSGS = [
+            'Preparando el escenario para ti...',
+            'El personaje está acomodándose en su silla...',
+            'Cargando la personalidad del stakeholder...',
+            'Revisando sus prioridades antes de la reunión...',
+            'Afinando los detalles del caso de negocio...',
+            'El stakeholder está listo para recibirte...',
+            'Construyendo el contexto de la sesión...',
+        ];
+        let loadingInterval = null;
+
+        // ── STEP NAVIGATION ────────────────────────────────────────────────────────
+        let currentStep = 0;
+
+        function goStep(n) {
+            n = parseInt(n); // fix: coerce string to int for === comparisons
+            // hide current step
+            const currentEl = document.getElementById(`step-${currentStep}`);
+            if (currentEl) currentEl.classList.add('hidden');
+            // show next step
+            const nextEl = document.getElementById(`step-${n}`);
+            if (nextEl) nextEl.classList.remove('hidden');
+            // update progress dots
+            for (let i = 0; i <= 3; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (dot) dot.classList.toggle('active', i === n);
+            }
+            currentStep = n;
+            // render casos grid only when arriving at step 2
+            if (n === 2) {
+                renderCasosGrid();
+            }
+        }
+
+        function toggleKeyVisibility() {
+            const inp = document.getElementById('apiKeyInput');
+            inp.type = inp.type === 'password' ? 'text' : 'password';
+        }
+
+        function checkStep1Ready() {
+            const key = document.getElementById('apiKeyInput').value.trim();
+            document.getElementById('btnStep1Next').disabled = key.length < 20;
+        }
+
+        function selectCaso(n) {
+            n = parseInt(n);
+            state.caso = n;
+            document.querySelectorAll('#casosGrid .card').forEach(c => c.classList.remove('selected'));
+            const casoEl = document.getElementById(`caso-${n}`);
+            if (casoEl) casoEl.classList.add('selected');
+            const descEl = document.getElementById('casoDesc');
+            descEl.style.display = 'block';
+            descEl.textContent = CASO_DESC[n] || '';
+            document.getElementById('btnStep2Next').disabled = false;
+        }
+
+        function selectNivelStep(n) {
+            n = parseInt(n);
+            state.nivel = n;
+            document.querySelectorAll('#step-3 .card').forEach(c => c.classList.remove('selected'));
+            const nivelEl = document.getElementById(`nivel-${n}`);
+            if (nivelEl) nivelEl.classList.add('selected');
+            document.getElementById('btnStep3Next').disabled = false;
+        }
 
         function renderCasosGrid() {
             document.getElementById('casosGrid').innerHTML = Object.entries(CASOS).map(([id, c]) => `
                 <div class="card" onclick="selectCaso(${id})" id="caso-${id}">
                     <div class="card-icon"><i data-lucide="${c.icon}"></i></div>
                     <div class="card-title">${c.name}</div>
-                    <div class="card-desc">Entrenamiento en ${c.name}.</div>
+                    <div class="card-desc">Haz clic para ver el contexto.</div>
                 </div>
             `).join('');
             lucide.createIcons();
         }
-
-        function selectCaso(n) { state.caso = n; document.querySelectorAll('#casosGrid .card').forEach(c => c.classList.remove('selected')); document.getElementById(`caso-${n}`).classList.add('selected'); checkSetupReady(); }
-        function selectNivel(n) { state.nivel = n; document.querySelectorAll('.niveles-grid .card').forEach(c => c.classList.remove('selected')); document.getElementById(`nivel-${n}`).classList.add('selected'); checkSetupReady(); }
-        function checkSetupReady() { const key = document.getElementById('apiKeyInput').value.trim(); document.getElementById('btnStart').disabled = !(state.caso && state.nivel && key.length > 20); }
 
         async function startSession() {
             state.apiKey = document.getElementById('apiKeyInput').value.trim();
             localStorage.setItem('sk_sim_anthropic', btoa(state.apiKey));
             state.rolesVisited.add(state.rol);
             document.getElementById('setupScreen').classList.add('hidden');
-            updateUI(); showLoading('CONECTANDO CON CLAUDE...'); await initPersonaje(); hideLoading();
+            updateUI();
+            showLoading();
+            await initPersonaje();
+            hideLoading();
         }
+
+        // ── CHAR COUNTER ──────────────────────────────────────────────────────────
+        function updateCharCounter(el) {
+            const len = el.value.length;
+            const max = 500;
+            const counter = document.getElementById('charCounter');
+            counter.textContent = `${len} / ${max}`;
+            if (len > max * 0.9) counter.className = 'char-counter danger';
+            else if (len > max * 0.7) counter.className = 'char-counter warn';
+            else counter.className = 'char-counter ok';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('sk_sim_anthropic');
+            if (savedKey) {
+                try {
+                    document.getElementById('apiKeyInput').value = atob(savedKey);
+                    checkStep1Ready();
+                } catch (e) { }
+            }
+            lucide.createIcons();
+        });
 
         async function callClaude(userMsg, systemOverride = null) {
             const PERFILES = {
@@ -911,7 +1208,14 @@ Eres el entrevistado. El analista conduce. Ese orden nunca se invierte.`;
         async function sendMessage() {
             const input = document.getElementById('chatInput'); const text = input.value.trim();
             if (!text || document.getElementById('btnSend').disabled) return;
-            input.value = ''; state.userMsgCount++; addMessage('user', text, null);
+            if (text.length > 500) {
+                alert('Mensaje muy largo. Maximo 500 caracteres por pregunta.');
+                return;
+            }
+            input.value = '';
+            document.getElementById('charCounter').textContent = '0 / 500';
+            document.getElementById('charCounter').className = 'char-counter ok';
+            state.userMsgCount++; addMessage('user', text, null);
             state.messages.push({ role: 'user', content: text }); document.getElementById('btnSend').disabled = true;
             try { const reply = await callClaude(null); state.messages.push({ role: 'assistant', content: reply }); addMessage('assistant', reply, CASOS[state.caso].roles[state.rol]); }
             catch (e) { addMessage('assistant', `Error: ${e.message}`, null); }
@@ -926,19 +1230,9 @@ Eres el entrevistado. El analista conduce. Ese orden nunca se invierte.`;
         }
 
         function renderReqs() {
-            const countEl = document.getElementById('reqsCount');
-            const prevCount = parseInt(countEl.textContent);
-            const newCount = state.requirements.length;
-
-            countEl.textContent = newCount;
-            if (newCount > prevCount) {
-                countEl.classList.remove('success-pulse');
-                void countEl.offsetWidth; // Trigger reflow
-                countEl.classList.add('success-pulse');
-            }
-
-            document.getElementById('reqsList').innerHTML = state.requirements.map((r, i) => `
-                <div class="card req-card-anim" style="padding:0.75rem; border-left:3px solid var(--accent-main); animation-delay: ${i * 0.1}s">
+            document.getElementById('reqsCount').textContent = state.requirements.length;
+            document.getElementById('reqsList').innerHTML = state.requirements.map(r => `
+                <div class="card" style="padding:0.75rem; border-left:3px solid var(--accent-main)">
                     <div style="font-size:0.7rem; font-weight:900; color:var(--accent-main)">${r.id}</div>
                     <div style="font-size:0.8rem">${r.desc.substring(0, 100)}...</div>
                 </div>
@@ -947,12 +1241,31 @@ Eres el entrevistado. El analista conduce. Ese orden nunca se invierte.`;
 
         function toggleSidebar(side) { if (side === 'left') document.getElementById('sidebarLeft').classList.toggle('open'); else document.getElementById('sidebarRight').classList.toggle('active'); }
         function handleInputKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
-        function showLoading(t = 'PROCESANDO...') { document.getElementById('loadingOverlay').classList.remove('hidden'); }
-        function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            const msgEl = document.getElementById('loadingMsg');
+            let i = 0;
+            msgEl.textContent = LOADING_MSGS[0];
+            loadingInterval = setInterval(() => {
+                i = (i + 1) % LOADING_MSGS.length;
+                msgEl.textContent = LOADING_MSGS[i];
+            }, 2200);
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            if (loadingInterval) { clearInterval(loadingInterval); loadingInterval = null; }
+        }
+
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-        function resetSession() { if (confirm('¿Reiniciar?')) location.reload(); }
-        function copyText(id) { navigator.clipboard.writeText(document.getElementById(id).textContent); alert('Copiado'); }
+        function resetSession() { if (confirm('¿Reiniciar la sesión? Se perderá el progreso actual.')) location.reload(); }
+        function copyText(id) { navigator.clipboard.writeText(document.getElementById(id).textContent); alert('Copiado al portapapeles.'); }
         async function generateIEEE() {
+            if (state.requirements.length === 0) {
+                alert('Debes capturar al menos un requerimiento. Usa el boton + REQUISITO en las respuestas del stakeholder.');
+                return;
+            }
             document.getElementById('ieeeModal').classList.remove('hidden');
             document.getElementById('ieeeOutput').textContent = 'Generando documento IEEE 830...';
             const reqs = state.requirements.length > 0
