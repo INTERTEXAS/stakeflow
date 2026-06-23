@@ -75,4 +75,10 @@ graph TD
 
 ---
 
+## 👥 Colaboradores / Contributors
+
+*   **Claude** - IA Elicitadora y Asistente de Desarrollo.
+
+---
+
 *Desarrollado para entrenar a la próxima generación de Ingenieros de Software.*
