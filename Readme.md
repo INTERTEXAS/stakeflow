@@ -1,69 +1,78 @@
-# StakeFlow — Elevando la Elicitación de Requerimientos
+# StakeFlow — Elevando la Elicitación de Requerimientos con IA
+
+<p align="center">
+  <img src="assets/banner.jpg" alt="StakeFlow Banner" width="100%" />
+</p>
 
 ### Entrena tu capacidad de análisis con stakeholders simulados por IA de alta fidelidad.
 
-[![Versión](https://img.shields.io/badge/Versión-4.0-emerald?style=for-the-badge)](https://github.com/INTERTEXAS/stakeflow)
-[![Motor](https://img.shields.io/badge/IA-Anthropic%20Claude-orange?style=for-the-badge)](https://anthropic.com)
-[![Licencia](https://img.shields.io/badge/Licencia-MIT-zinc?style=for-the-badge)](LICENSE)
+<p align="center">
+  <a href="https://github.com/INTERTEXAS/stakeflow"><img src="https://img.shields.io/badge/Versión-4.0-emerald?style=for-the-badge" alt="Versión" /></a>
+  <a href="https://anthropic.com"><img src="https://img.shields.io/badge/IA-Claude%204.6-orange?style=for-the-badge" alt="Motor de IA" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/Licencia-MIT-zinc?style=for-the-badge" alt="Licencia" /></a>
+</p>
 
 ---
 
-## La Visión detrás de StakeFlow
+## 🌟 La Visión detrás de StakeFlow
 
-En el mundo real del desarrollo de software, los requerimientos no vienen en una lista perfecta; vienen de personas con emociones, sesgos y agendas ocultas. **StakeFlow** es una herramienta de grado industrial diseñada para cerrar la brecha entre la teoría académica y la práctica profesional.
+En el desarrollo de software profesional, los requerimientos rara vez se entregan estructurados; provienen de personas reales con emociones, agendas ocultas y sesgos cognitivos. **StakeFlow** es una plataforma interactiva diseñada para cerrar la brecha entre la teoría de ingeniería de software y el trato profesional con clientes en el mundo real.
 
-Ya no necesitas esperar a un proyecto real para enfrentarte a un cliente difícil. Con StakeFlow, puedes perfeccionar tu técnica de entrevista en un entorno seguro potenciado por **Anthropic Claude API**, garantizando un razonamiento de vanguardia y respuestas altamente contextuales.
-
----
-
-## Innovaciones en la Versión 4.0
-
-Hemos evolucionado el núcleo de la aplicación para ofrecer una experiencia más robusta y sofisticada:
-
-- **Cerebro Claude:** Migración total a la API de Anthropic Claude (Siguiente Generación). Obtén matices psicológicos superiores y un seguimiento de instrucciones mucho más preciso.
-- **Asistente de Configuración:** Nuevo proceso guiado en 4 pasos (Bienvenida, Conexión, Escenario y Nivel) para una inmersión total sin fricciones.
-- **Favicon Temático:** Integración de identidad visual propia mediante iconografía vectorial.
-- **Diseño de Vanguardia (Zinc 2.0):** Refinamiento de la interfaz con **Glassmorphism** y una experiencia de usuario optimizada para sesiones largas.
-- **Personalidades Profundas:** Stakeholders con perfiles psicológicos únicos que reaccionan a tu tono, evaden preguntas incómodas o exigen mayor claridad técnica según el nivel.
-- **Captura Inteligente:** Sistema de documentación en tiempo real que permite capturar RFs con un clic sin romper el flujo de la entrevista.
+Perfecciona tus técnicas de entrevista interactuando con clientes y patrocinadores desafiantes en un entorno seguro y controlado, ahora potenciado por la última generación de modelos de lenguaje de Anthropic Claude.
 
 ---
 
-## Escenarios de Entrenamiento
+## 🚀 Innovaciones en la Versión 4.0 (Sistema Nuevo)
 
-| Sector | El Desafío | Perfiles Clave |
-|:---:|:---|:---|
-| **Salud** | Digitalización de una clínica bajo presión legal. | Dr. Roberto (Dueño), Laura (Admin), Carlos (Recepcionista). |
-| **Gastronomía** | Control de fugas en una cadena sin POS. | Martín (Inversionista), Sofía (Gerente), Diego (Cajero). |
-| **Académico** | Modernización de una universidad de 8k alumnos. | Dra. Elena (Rectora), Ing. Gómez (Sistemas), Ana (Alumna). |
-| **Fitness** | Optimización de accesos y retención de socios. | Sr. Alejandro (Inversionista), Valeria (Gerente), Lucas (Staff). |
+Hemos actualizado y optimizado el motor del sistema para ofrecer una inmersión y precisión sin precedentes:
 
----
-
-## Stack Tecnológico
-
-- **IA:** Anthropic Claude API (Claude 3.5 Sonnet).
-- **UI:** Sistema de diseño **Zinc Dark** + Glassmorphism.
-- **Iconografía:** Lucide Icons (Vectorial).
-- **Tipografía:** Geist Sans + JetBrains Mono.
+*   **🧠 Cerebro Claude 4.6 (Nuevo Fix):** Migración y corrección de compatibilidad al modelo oficial `claude-sonnet-4-6`, resolviendo el problema del modelo descontinuado anterior (`claude-sonnet-4-20250514`). Esto garantiza respuestas con matices psicológicos profundos y una lógica de negocios superior.
+*   **✨ Interfaz Zinc Dark 2.0:** Un refinamiento estético completo basado en *Glassmorphism*, paletas sofisticadas oscuras y tipografías Geist Sans / JetBrains Mono que disminuyen la fatiga visual.
+*   **🛠️ Asistente de Configuración Guiada:** Nuevo flujo interactivo en 4 pasos (Bienvenida, Conexión, Escenario y Dificultad) para iniciar simulaciones en segundos.
+*   **🎯 Captura Inteligente con Un Clic:** Registra Requerimientos Funcionales (RFs) detectados directamente desde la conversación sin romper el flujo de la entrevista.
+*   **🎭 Personalidades Dinámicas:** Simulación de stakeholders con perfiles psicológicos únicos. Evaden preguntas, exigen tecnicismos o cambian de opinión según el nivel seleccionado (Junior, Semi-Senior, Senior).
 
 ---
 
-## Cómo empezar en 30 segundos
+## 🎭 Escenarios de Entrenamiento
 
-1. **Obtén tu Clave:** Genera una API Key en la [Consola de Anthropic](https://console.anthropic.com/).
-2. **Ejecuta:** Abre `index.html` en tu navegador.
-3. **Entrena:** Ingresa tu clave, selecciona un escenario y nivel de dificultad, y comienza la sesión.
-
----
-
-## Ciclo Profesional de Elicitación
-
-1. **Entrevista:** Detecta inconsistencias, miedos y necesidades reales del stakeholder.
-2. **Captura:** Documenta requerimientos funcionales al instante desde el chat.
-3. **Genera:** Exporta una especificación formal basada en el estándar **IEEE 830**.
-4. **Evalúa:** Recibe un feedback detallado sobre tu desempeño, fortalezas y áreas de mejora.
+| Escenario | Sector | El Desafío | Perfiles Clave |
+| :--- | :--- | :--- | :--- |
+| **🏥 Clínica de Salud** | Salud | Digitalización de flujo operativo bajo presión legal. | Dr. Roberto (Dueño), Laura (Admin), Carlos (Recepcionista) |
+| **🍽️ Cadena Gastronómica** | Gastronomía | Control de pérdidas y fugas en una cadena sin POS. | Martín (Inversionista), Sofía (Gerente), Diego (Cajero) |
+| **🏫 Campus Académico** | Educación | Modernización de portal de servicios para 8k alumnos. | Dra. Elena (Rectora), Ing. Gómez (Sistemas), Ana (Alumna) |
+| **💪 Smart Gym Hub** | Fitness | Optimización de control de accesos y retención de socios. | Sr. Alejandro (Inversionista), Valeria (Gerente), Lucas (Staff) |
 
 ---
 
-Desarrollado para la próxima generación de Ingenieros de Software.
+## 🔄 Ciclo Elicitación Profesional
+
+```mermaid
+graph TD
+    A[🎙️ 1. Entrevista Interactiva] -->|Pregunta, detecta sesgos y agendas| B[🎯 2. Captura Inteligente]
+    B -->|Registra requerimientos con un clic| C[📝 3. Generación IEEE 830]
+    C -->|Crea especificación formal de requerimientos| D[🧠 4. Evaluación de Desempeño]
+    D -->|Retroalimentación detallada y áreas de mejora| A
+```
+
+---
+
+## 🛠️ Stack Tecnológico
+
+*   **Core:** HTML5 + JavaScript (ES6+ sin dependencias externas pesadas).
+*   **Inteligencia Artificial:** Anthropic Claude API (`claude-sonnet-4-6`).
+*   **Diseño Visual:** Glassmorphism + Zinc CSS System.
+*   **Recursos:** Lucide Icons (Iconografía vectorial moderna).
+*   **Tipografía:** Geist Sans (Legibilidad) + JetBrains Mono (Datos y Código).
+
+---
+
+## ⚡ Cómo Empezar en 30 Segundos
+
+1.  **Obtén tu API Key:** Regístrate y genera una clave en la [Consola de Anthropic](https://console.anthropic.com/).
+2.  **Lanza la Aplicación:** Abre el archivo [index.html](file:///Users/root1/Desktop/stakeflow/index.html) en cualquier navegador moderno.
+3.  **Configura y Entrena:** Introduce tu API Key, selecciona un escenario de entrenamiento, el nivel de dificultad, ¡y que comience la elicitación!
+
+---
+
+*Desarrollado para entrenar a la próxima generación de Ingenieros de Software.*
